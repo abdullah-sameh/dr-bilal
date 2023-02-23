@@ -1,0 +1,29 @@
+nav {
+  width: 100%;
+  background: var(--blue);
+  margin-bottom: 20px;
+}
+nav > .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+nav .right {
+  display: flex;
+  gap: 10px;
+}
+nav a {
+  font: 500 20px var(--font);
+  color: var(--white);
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: var(--transition-time);
+  -webkit-transition: var(--transition-time);
+  -moz-transition: var(--transition-time);
+  -ms-transition: var(--transition-time);
+  -o-transition: var(--transition-time);
+}
+nav a:hover, .hover {
+  background: var(--white);
+  color: #000;
+}

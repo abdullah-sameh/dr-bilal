@@ -1,0 +1,32 @@
+.circle {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+}
+.static {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.static ul {
+  display: grid;
+}
+.static li {
+  font-family: var(--font);
+  font-weight: 400;
+  font-size: 18px;
+  position: relative;
+  padding: 10px;
+}
+li > i {
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -o-transform: translateY(-50%);
+}
