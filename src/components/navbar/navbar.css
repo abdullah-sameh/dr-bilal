@@ -23,7 +23,8 @@ nav a {
   -ms-transition: var(--transition-time);
   -o-transition: var(--transition-time);
 }
-nav a:hover, .hover {
+nav a:hover,
+.hover {
   background: var(--white);
   color: #000;
 }

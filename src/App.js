@@ -1,9 +1,9 @@
-import { Route, Routes } from "react-router-dom"
-import "./App.css"
-import Add from "./pages/add/Add"
-import Data from "./pages/data/Data"
-import Home from "./pages/Home"
-import Login from "./pages/login/Login"
+import { Route, Routes } from "react-router-dom";
+import "./App.css";
+import Add from "./containers/add/Add";
+import Data from "./containers/data/Data";
+import Home from "./containers/home/Home";
+import Login from "./containers/login/Login";
 
 export default function App() {
   return (
@@ -13,5 +13,5 @@ export default function App() {
       <Route path="/add" element={<Add />} />
       <Route path="/data" element={<Data />} />
     </Routes>
-  )
+  );
 }

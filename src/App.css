@@ -5,26 +5,29 @@
   margin: 0;
   box-sizing: border-box;
 }
+
 :root {
   --blue: #207bffff;
   --white: #f5f7faff;
   --transition-time: 0.2s;
   --font: "Tajawal", sans-serif;
 }
+
 :is(input, a, ul, li) {
   all: initial;
 }
+
 a {
   user-select: none;
 }
+
 body {
   background: var(--white);
   direction: rtl;
+  font-family: var(--font) !important;
 }
 
 .container {
   max-width: 1100px;
   margin: auto;
 }
-
-

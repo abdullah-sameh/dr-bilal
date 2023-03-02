@@ -6,11 +6,9 @@
 }
 .login {
   width: 500px;
-  height: 500px;
   background: var(--white);
   color: var(--blue);
   padding: 25px;
-  font-family: var(--font);
   display: flex;
   flex-direction: column;
   box-shadow: 0 0 10px rgb(150, 150, 150);
@@ -22,10 +20,24 @@
   z-index: 5;
 }
 
+.reset-form {
+  background-color: #00000045;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
 @media (max-width: 768px) {
-  .login {
+  .login,
+  .reset-form {
     width: 100%;
-    /* height: 200px; */
   }
 }
 
@@ -42,16 +54,47 @@
   gap: 10px;
 }
 
-.login > form > label {
+.reset-form form {
+  width: 300px;
+  background: var(--white);
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: var(--blue);
+  padding: 25px;
+  box-shadow: 0 0 10px rgb(150, 150, 150);
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  position: relative;
+}
+
+.reset-form form .close {
+  position: absolute;
+  left: 15px;
+  top: 10px;
+  cursor: pointer;
+}
+
+.login > form > label,
+.reset-form > form > label {
   font-weight: 600;
   margin: 10px 0;
 }
-.login > form > input {
+
+.reset-form > form > input {
+  margin-top: 20px;
+}
+
+.login > form > input,
+.reset-form > form > input {
   background: var(--white);
   line-height: 0.5;
   color: #000;
   font-family: var(--font);
-  font-size: 22px;
   padding: 10px;
   border: 2px solid var(--blue);
   border-radius: 10px;
@@ -61,13 +104,16 @@
   -o-border-radius: 10px;
 }
 
-.login > form > div {
-  flex-grow: 1;
-  display: grid;
-  align-items: end;
-  justify-content: center;
+.login > form > div,
+.reset-form > form > div {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.login > form a {
+
+.login > form button,
+.reset-form > form button {
   background: var(--blue);
   color: var(--white);
   width: max-content;
@@ -85,11 +131,25 @@
   -moz-border-radius: 15px;
   -ms-border-radius: 15px;
   -o-border-radius: 15px;
+  border: none;
 }
-.login > form a:hover {
+
+.reset-form > form button {
+  font-size: 18px;
+}
+
+.login > form button:hover,
+.reset-form > form button:hover {
   transform: scale(1.1);
   -webkit-transform: scale(1.1);
   -moz-transform: scale(1.1);
   -ms-transform: scale(1.1);
   -o-transform: scale(1.1);
+}
+
+.login > form p {
+  cursor: pointer;
+  margin-top: 15px;
+  font-size: medium;
+  font-weight: bold;
 }

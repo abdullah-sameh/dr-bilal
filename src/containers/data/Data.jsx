@@ -1,7 +1,27 @@
-import './data.css'
-import Navbar from "../../component/navbar/Navbar"
+import "./data.css";
+import Navbar from "../../components/navbar/Navbar";
+import { useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../firebase";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../rtk/slices/userSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function Data() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        dispatch(setUser(user));
+      } else {
+        navigate("/");
+      }
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -25,12 +45,12 @@ export default function Data() {
             <tr>
               <td>230</td>
               <td>عبدالله سامح ماهر حسنين محكد ابراهيم السباعي</td>
-              <td className='many'>
+              <td className="many">
                 <p>حشو عصب</p>
                 <p>خلع درس</p>
                 <p>خلع درسين</p>
               </td>
-              <td className='many'>
+              <td className="many">
                 <p>23/4/2015</p>
                 <p>02/5/2022</p>
                 <p>07/6/2022</p>
@@ -43,12 +63,12 @@ export default function Data() {
             <tr>
               <td>230</td>
               <td>عبدالله سامح ماهر</td>
-              <td className='many'>
+              <td className="many">
                 <p>حشو عصب</p>
                 <p>خلع درس</p>
                 <p>خلع درسين</p>
               </td>
-              <td className='many'>
+              <td className="many">
                 <p>23/4/2015</p>
                 <p>02/5/2022</p>
                 <p>07/6/2022</p>
@@ -62,5 +82,5 @@ export default function Data() {
         </table>
       </div>
     </>
-  )
+  );
 }
