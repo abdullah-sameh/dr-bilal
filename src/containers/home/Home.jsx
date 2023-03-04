@@ -11,6 +11,7 @@ export default function Home() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // check if the current user logged in before, and if not redirect this user to login page
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {

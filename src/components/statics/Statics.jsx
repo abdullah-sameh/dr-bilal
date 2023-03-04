@@ -1,46 +1,97 @@
-import { fillColors, getPercentage } from "../tools"
-import "./statics.css"
+import "./statics.css";
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getStatistics } from "../../rtk/slices/statistcsSlice";
 
 export default function Statics() {
-  const operationNumbers = [11, 5, 9, 10] // number of each operation
-  const operationNames = ["حشو عادي", "حشو عصب", "خلع ضرس", "طربوش", "جراحة"]
-  const colors = [
-    "#267",
-    "#a32",
-    "#0d0",
-    "#f93",
-    "#8d8",
-    "#0c0",
-    "#30d",
-    "#3b0",
-    "#f49",
-    "#390",
-  ]
+  const dispatch = useDispatch();
 
-  const percentage = getPercentage(operationNumbers)
+  const statistics = useSelector((state) => state?.statistics);
 
+  useEffect(() => {
+    dispatch(getStatistics());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  let months = [
+    "يناير",
+    "فبراير",
+    "مارس",
+    "أبريل",
+    "مايو",
+    "يونيه",
+    "يوليو",
+    "أغسطس",
+    "سبتمبر",
+    "أكتوير",
+    "نوفمبر",
+    "ديسمبر",
+  ];
+
+  //options for highCharts
+  let options = {
+    chart: {
+      type: "column",
+      height: 600,
+      width: 990,
+    },
+
+    title: {
+      text: `${statistics?.year} Statistics`,
+    },
+    xAxis: {
+      categories: months,
+      crosshair: true,
+    },
+    yAxis: {
+      min: 0,
+      title: {
+        text: "Patients Number",
+      },
+    },
+    plotOptions: {
+      column: {
+        pointPadding: 0.1,
+        borderWidth: 0,
+      },
+    },
+    series: statistics?.illnesses,
+  };
 
   return (
     <div className="container static">
-      <div
-        className="circle"
-        style={{
-          backgroundImage: "conic-gradient(" + fillColors(percentage, colors),
-        }}
-      />
-      <div className="row-data">
-        <ul>
-          {operationNumbers.map((operationNumber, i) => {
-            return (
-              <li key={i}>
-                <i style={{ backgroundColor: colors[i] }}></i>
-                {operationNames[i]}: {operationNumber}{" "}
-                {operationNumber > 10 ? "حالة" : "حالات"}
-              </li>
-            )
-          })}
-        </ul>
+      <HighchartsReact highcharts={Highcharts} options={options} />
+      <div className="data-table">
+        <table className="statistics-table table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              {months.map((month, ind) => (
+                <th key={ind}>{month}</th>
+              ))}
+              <th>الإجمالى</th>
+            </tr>
+          </thead>
+          <tbody>
+            {statistics?.illnesses?.map((illness, index) => (
+              <tr key={index}>
+                <th>{illness?.name}</th>
+                {illness?.data?.map((monthPatientsNumber, index) => (
+                  <td key={index}>{monthPatientsNumber}</td>
+                ))}
+                <th>
+                  {illness?.data?.reduce(
+                    (acc, monthPatientsNumber) => acc + monthPatientsNumber,
+                    0
+                  )}
+                </th>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
-  )
+  );
 }

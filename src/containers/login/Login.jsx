@@ -24,6 +24,7 @@ export default function Login() {
     await loadFull(main);
   };
 
+  //check if the current user is loged in before, and redirect him to home page
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -34,6 +35,7 @@ export default function Login() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  //handle forget password in login page
   const resetFormHandler = (e) => {
     e.preventDefault();
     let email = e.target[0]?.value;
@@ -82,6 +84,7 @@ export default function Login() {
       });
   };
 
+  //handle login form data and display errors in alerts
   const loginHandler = (e) => {
     e.preventDefault();
     let email = e?.target[0]?.value;

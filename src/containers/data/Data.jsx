@@ -30,7 +30,7 @@ export default function Data() {
         <form>
           <input type="search" />
         </form>
-        <table>
+        <table className="data-table">
           <thead>
             <tr>
               <td>الرقم</td>
