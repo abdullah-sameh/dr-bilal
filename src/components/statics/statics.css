@@ -25,7 +25,7 @@
   overflow: hidden;
 }
 .statistics-table tbody tr:hover {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(32, 121, 255, 0.2);
 }
 .statistics-table tbody td {
   position: relative;
@@ -36,17 +36,17 @@
 .statistics-table tbody td:hover::before {
   content: "";
   position: absolute;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(32, 121, 255, 0.2);
   width: 100%;
   height: 9999px;
   top: -2000px;
   z-index: -1;
-  margin:0 -8px;
+  margin: 0 -8px;
 }
 
 @media (max-width: 991px) {
   [class^="highcharts-container"] {
-    width: 680px !important;
+    width: 740px !important;
     height: 430px !important;
   }
   .statistics-table {
@@ -66,7 +66,7 @@
 
 @media (max-width: 576px) {
   [class^="highcharts-container"] {
-    width: 300px !important;
+    width: 330px !important;
     height: 200px !important;
   }
 }

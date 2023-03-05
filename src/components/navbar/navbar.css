@@ -28,6 +28,13 @@ nav .container .navbar-brand span {
   margin-right: 10px;
 }
 
+nav .container .navbar-toggler {
+  border: none !important;
+  color: white;
+  font-size: 30px;
+  box-shadow: none;
+}
+
 nav .container ul {
   display: flex;
   align-items: center;

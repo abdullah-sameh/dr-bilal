@@ -2,6 +2,7 @@ import "./navbar.css";
 import { Link, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
+import { HiMenuAlt4 } from "react-icons/hi";
 import logo from "../../assets/logo.png";
 import Swal from "sweetalert2";
 
@@ -55,7 +56,7 @@ export default function Navbar() {
       <nav className="navbar navbar-expand-lg">
         <div className="container">
           {/*eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-          <a class="navbar-brand" href="">
+          <a className="navbar-brand" href="">
             <img src={logo} alt="araac_logo" /> <span>آراك</span>
           </a>
           <button
@@ -67,7 +68,7 @@ export default function Navbar() {
             aria-expanded="false"
             aria-label="Toggle navigation"
           >
-            {/* <span className="navbar-toggler-icon"></span> */}
+            <HiMenuAlt4 />
           </button>
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav">

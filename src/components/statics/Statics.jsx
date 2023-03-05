@@ -64,7 +64,7 @@ export default function Statics() {
     <div className="container static">
       <HighchartsReact highcharts={Highcharts} options={options} />
       <div className="data-table">
-        <table className="statistics-table table table-striped">
+        <table className="statistics-table table">
           <thead>
             <tr>
               <th>المرض</th>
