@@ -67,9 +67,9 @@ export default function Statics() {
         <table className="statistics-table table table-striped table-hover">
           <thead>
             <tr>
-              <th>#</th>
-              {months.map((month, ind) => (
-                <th key={ind}>{month}</th>
+              <th>المرض</th>
+              {months.map((month, index) => (
+                <th key={index}>{month}</th>
               ))}
               <th>الإجمالى</th>
             </tr>
