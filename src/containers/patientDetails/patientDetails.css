@@ -1,0 +1,93 @@
+.patient-info {
+  background-color: rgba(0, 0, 0, 0.575);
+  z-index: 5;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  padding: 50px;
+}
+
+@media (max-width: 556px) {
+  .patient-info {
+    padding: 30px 15px;
+  }
+}
+
+.patient-info .container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.patient-info .editPatientInfo {
+  background-color: white;
+  border-radius: 15px;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  -ms-border-radius: 15px;
+  -o-border-radius: 15px;
+  padding: 20px;
+}
+
+.patient-info .editPatientInfo .main-info,
+.patient-info .editPatientInfo .next-visits .content {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .patient-info .editPatientInfo .main-info {
+    display: block;
+  }
+}
+
+.patient-info .editPatientInfo > div,
+.patient-info .editPatientInfo .main-info > div,
+.patient-info .editPatientInfo .next-visits .content > div {
+  margin: 20px 0 20px 20px;
+}
+
+.patient-info .editPatientInfo > div label {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+.patient-info .editPatientInfo .marital-status .status-container,
+.patient-info .editPatientInfo .pregnant-status .status-container,
+.patient-info .editPatientInfo .sick-history .popular-sicks {
+  display: flex;
+  align-items: center;
+}
+
+.patient-info .editPatientInfo .marital-status .status-container input,
+.patient-info .editPatientInfo .pregnant-status .status-container input,
+.patient-info .editPatientInfo .sick-history .popular-sicks input {
+  margin: 0 5px 5px 10px;
+}
+
+.patient-info .editPatientInfo button {
+  background-color: var(--blue);
+  font-size: 1.5rem;
+  color: var(--white);
+  border-radius: 15px;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  -ms-border-radius: 15px;
+  -o-border-radius: 15px;
+  border: none;
+  padding: 10px 15px;
+  transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -ms-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+}
+
+.patient-info .editPatientInfo button:hover {
+  transform: scale(1.1);
+  -webkit-transform: scale(1.1);
+  -moz-transform: scale(1.1);
+  -ms-transform: scale(1.1);
+  -o-transform: scale(1.1);
+}

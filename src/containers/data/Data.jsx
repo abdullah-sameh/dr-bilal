@@ -1,15 +1,22 @@
 import "./data.css";
 import Navbar from "../../components/navbar/Navbar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../firebase";
-import { useDispatch } from "react-redux";
+import { auth, db } from "../../firebase";
+import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../rtk/slices/userSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
+import { getAllPatients } from "../../rtk/slices/allPatientsSlice";
+import { deleteDoc, doc } from "firebase/firestore";
+import Swal from "sweetalert2";
+import PatientDetails from "../patientDetails/PatientDetails";
 
 export default function Data() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [showedData, setShowedData] = useState([]);
+  const patientsData = useSelector((state) => state.allPatients);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -19,67 +26,121 @@ export default function Data() {
         navigate("/");
       }
     });
-
+    dispatch(getAllPatients());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    setShowedData(patientsData);
+  }, [patientsData]);
+
+  const searchHandler = (e) => {
+    if (parseInt(e.currentTarget.value)) {
+      setShowedData(
+        patientsData.filter((patient) =>
+          patient?.data?.code?.includes(e.currentTarget.value)
+        )
+      );
+    } else {
+      setShowedData(
+        patientsData.filter((patient) =>
+          patient?.data?.name?.includes(e.currentTarget.value)
+        )
+      );
+    }
+  };
+
+  const deletePatient = async (patientId) => {
+    Swal.fire({
+      title: "هل أنت متأكد؟",
+      text: `من أنك تريد حذف هذه البيانات؟`,
+      showDenyButton: true,
+      confirmButtonText: "تأكيد",
+      denyButtonText: `إالغاء`,
+    }).then(async (result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        await deleteDoc(doc(db, "patients", patientId))
+          .then(() => {
+            dispatch(getAllPatients());
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "تم الحذف بنجاح",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          })
+          .catch((e) => {
+            console.log(e.message);
+            Swal.fire({
+              icon: "error",
+              title: "خطأ",
+              text: "حاول مرة أخرى!",
+            });
+          });
+      }
+    });
+  };
 
   return (
     <>
       <Navbar />
-      <div className="data container">
-        <form>
-          <input type="search" />
-        </form>
-        <table className="data-table">
-          <thead>
-            <tr>
-              <td>الرقم</td>
-              <td>الاسم</td>
-              <td>العملية</td>
-              <td>التاريخ</td>
-              <td>الحالة المزاجية</td>
-              <td>التفاصيل</td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>230</td>
-              <td>عبدالله سامح ماهر حسنين محكد ابراهيم السباعي</td>
-              <td className="many">
-                <p>حشو عصب</p>
-                <p>خلع درس</p>
-                <p>خلع درسين</p>
-              </td>
-              <td className="many">
-                <p>23/4/2015</p>
-                <p>02/5/2022</p>
-                <p>07/6/2022</p>
-              </td>
-              <td>مش مهم</td>
-              <td>
-                <button>تفاصيل</button>
-              </td>
-            </tr>
-            <tr>
-              <td>230</td>
-              <td>عبدالله سامح ماهر</td>
-              <td className="many">
-                <p>حشو عصب</p>
-                <p>خلع درس</p>
-                <p>خلع درسين</p>
-              </td>
-              <td className="many">
-                <p>23/4/2015</p>
-                <p>02/5/2022</p>
-                <p>07/6/2022</p>
-              </td>
-              <td>مش مهم</td>
-              <td>
-                <button>تفاصيل</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div className="all-patients">
+        <div className="container">
+          <form>
+            <input
+              type="search"
+              placeholder="إبحث من هنا..."
+              onChange={searchHandler}
+            />
+          </form>
+          <table className="data-table">
+            <thead>
+              <tr>
+                <td>الرقم</td>
+                <td>الاسم</td>
+                <td>اخر زيارة</td>
+                <td>التاريخ</td>
+                <td>التفاصيل</td>
+              </tr>
+            </thead>
+            <tbody>
+              {showedData?.map((patient) => (
+                <tr key={patient?.id}>
+                  <td>{patient?.data?.code}</td>
+                  <td>{patient?.data?.name}</td>
+                  <td>
+                    {patient?.data?.previousVisits.length === 0
+                      ? "----"
+                      : patient?.data?.previousVisits[
+                          patient?.data?.previousVisits.length - 1
+                        ].reason}
+                  </td>
+                  <td>
+                    {patient?.data?.previousVisits.length === 0
+                      ? "----"
+                      : patient?.data?.previousVisits[
+                          patient?.data?.previousVisits.length - 1
+                        ].visitDate}
+                  </td>
+                  <td>
+                    <Link to={`./${patient?.id}`}>تفاصيل</Link>
+                    <button
+                      onClick={() => deletePatient(patient?.id)}
+                      className="delete"
+                    >
+                      حذف
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <Routes>
+          <Route path="/:patientId" element={<PatientDetails />} />
+        </Routes>
       </div>
     </>
   );

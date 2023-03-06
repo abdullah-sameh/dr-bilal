@@ -6,31 +6,26 @@ table.data-table {
   border: 1px solid #000;
   border-top: 0;
   text-align: center;
+  overflow-x: scroll;
 }
+
 table.data-table thead {
   background: var(--blue);
   color: var(--white);
   padding: 0;
   border: 0;
 }
+
 table.data-table td {
-  padding: 10px 5px 5px;
+  padding: 10px 5px;
   border-left: 1px solid #000;
 }
+
 table.data-table tr {
   border-bottom: 1px solid #000;
 }
-.many {
-  padding: 0;
-}
-td > p {
-  border: none;
-  display: block;
-  padding: 5px;
-}
-td > p:not(:last-child) {
-  border-bottom: 1px solid #000;
-}
+
+table.data-table a,
 table.data-table button {
   all: initial;
   font: 500 18px var(--font);
@@ -43,24 +38,52 @@ table.data-table button {
   -moz-transition: var(--transition-time);
   -ms-transition: var(--transition-time);
   -o-transition: var(--transition-time);
+  text-decoration: none;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  margin-bottom: 5px;
 }
-table.data-table button:hover {
-  transform: scale(1.1);
-  -webkit-transform: scale(1.1);
-  -moz-transform: scale(1.1);
-  -ms-transform: scale(1.1);
-  -o-transform: scale(1.1);
+
+@media (max-width: 556px) {
+  table.data-table a,
+  table.data-table button,
+  table.data-table {
+    font-size: 0.8em;
+  }
 }
-.data > form {
+
+table.data-table button.delete {
+  background-color: rgb(205, 0, 0);
+  margin-right: 10px;
+}
+
+@media (max-width: 350px) {
+  table.data-table button.delete {
+    margin: 5px;
+  }
+}
+
+.all-patients form {
   width: 100%;
 }
-.data > form > input {
+
+.all-patients form input[type="search"] {
   box-sizing: border-box;
-  width: 100%;
   background: var(--white);
   border: 1px solid var(--blue);
+  outline: none;
   margin-bottom: 30px;
   font: 400 25px var(--font);
   color: #000;
   padding: 5px;
+  width: 100%;
+}
+
+@media (max-width: 556px) {
+  .all-patients form input[type="search"] {
+    font-size: 16px;
+  }
 }
