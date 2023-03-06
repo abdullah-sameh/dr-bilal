@@ -76,8 +76,3 @@
   max-width: 100% !important;
   overflow-x: scroll;
 }
-
-.data-table th,
-.data-table td {
-  padding: 15px;
-}

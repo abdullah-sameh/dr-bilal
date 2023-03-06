@@ -13,9 +13,9 @@
   --font: "Tajawal", sans-serif;
 }
 
-:is(input, a, ul, li) {
+/* :is(input, a, ul, li) {
   all: initial;
-}
+} */
 
 a {
   user-select: none;
