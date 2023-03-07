@@ -1,40 +1,40 @@
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import Swal from "sweetalert2";
-import { auth, db } from "../../firebase";
-import { getPatientById } from "../../rtk/slices/patientSlice";
-import { setUser } from "../../rtk/slices/userSlice";
-import "./patientDetails.css";
+import { onAuthStateChanged } from "firebase/auth"
+import { doc, setDoc } from "firebase/firestore"
+import React, { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { useNavigate, useParams } from "react-router-dom"
+import Swal from "sweetalert2"
+import { auth, db } from "../../firebase"
+import { getPatientById } from "../../rtk/slices/patientSlice"
+import { setUser } from "../../rtk/slices/userSlice"
+import "./patientDetails.css"
 
 const PatientDetails = () => {
-  const { patientId } = useParams();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const { patientId } = useParams()
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
-  const patient = useSelector((state) => state.patientById);
-  const [patientInfo, setpatientInfo] = useState({});
+  const patient = useSelector((state) => state.patientById)
+  const [patientInfo, setpatientInfo] = useState({})
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        dispatch(setUser(user));
+        dispatch(setUser(user))
       } else {
-        navigate("/");
+        navigate("/")
       }
-    });
-    dispatch(getPatientById(patientId));
+    })
+    dispatch(getPatientById(patientId))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [])
 
   useEffect(() => {
-    setpatientInfo(patient.data);
-  }, [patient]);
+    setpatientInfo(patient.data)
+  }, [patient])
 
   const editInfo = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     Swal.fire({
       title: "هل أنت متأكد؟",
       text: `من أنك تريد تعديل بيانات ${patientInfo?.name}؟`,
@@ -46,27 +46,27 @@ const PatientDetails = () => {
       if (result.isConfirmed) {
         await setDoc(doc(db, "patients", patientId), patientInfo)
           .then(() => {
-            dispatch(getPatientById(patientId));
+            dispatch(getPatientById(patientId))
             Swal.fire({
               position: "center",
               icon: "success",
               title: "تم التعديل بنجاح",
               showConfirmButton: false,
               timer: 1500,
-            });
-            navigate("/data");
+            })
+            navigate("/data")
           })
           .catch((e) => {
-            console.log(e.message);
+            console.log(e.message)
             Swal.fire({
               icon: "error",
               title: "خطأ",
               text: "حاول مرة أخرى!",
-            });
-          });
+            })
+          })
       }
-    });
-  };
+    })
+  }
 
   return (
     <div className="patient-info">
@@ -89,7 +89,7 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     name: e.currentTarget.value,
-                  });
+                  })
                 }}
                 required
               />
@@ -106,7 +106,7 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     phone: e.currentTarget.value,
-                  });
+                  })
                 }}
                 required
               />
@@ -123,7 +123,7 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     birthDate: e.currentTarget.value,
-                  });
+                  })
                 }}
               />
             </div>
@@ -139,7 +139,7 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     job: e.currentTarget.value,
-                  });
+                  })
                 }}
               />
             </div>
@@ -155,7 +155,7 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     adresse: e.currentTarget.value,
-                  });
+                  })
                 }}
               />
             </div>
@@ -178,7 +178,7 @@ const PatientDetails = () => {
                     setpatientInfo({
                       ...patientInfo,
                       maritalStatus: e.currentTarget.value,
-                    });
+                    })
                 }}
               />
 
@@ -197,7 +197,7 @@ const PatientDetails = () => {
                     setpatientInfo({
                       ...patientInfo,
                       maritalStatus: e.currentTarget.value,
-                    });
+                    })
                 }}
               />
             </div>
@@ -315,7 +315,7 @@ const PatientDetails = () => {
                 setpatientInfo({
                   ...patientInfo,
                   otherSicks: e.currentTarget.value.toString().split("  "),
-                });
+                })
               }}
             />
           </div>
@@ -336,7 +336,7 @@ const PatientDetails = () => {
                   previousSurgeryOperations: e.currentTarget.value
                     .toString()
                     .split("  "),
-                });
+                })
               }}
             />
           </div>
@@ -355,7 +355,7 @@ const PatientDetails = () => {
                 setpatientInfo({
                   ...patientInfo,
                   allergy: e.currentTarget.value.toString().split("  "),
-                });
+                })
               }}
             />
           </div>
@@ -371,30 +371,32 @@ const PatientDetails = () => {
                 setpatientInfo({
                   ...patientInfo,
                   opinion: e.currentTarget.value,
-                });
+                })
               }}
             />
           </div>
           <div className="previous-visits my-5">
             <h4 className="title">الزيارات السابقة:-</h4>
-            <table className="previous-visits table table-striped w-lg-100 w-md-auto">
-              <thead>
-                <tr>
-                  <td>السبب</td>
-                  <td>التاريخ</td>
-                  <td>الموعد</td>
-                </tr>
-              </thead>
-              <tbody>
-                {patientInfo?.previousVisits?.map((visit, index) => (
-                  <tr key={index}>
-                    <td>{visit?.reason}</td>
-                    <td>{visit?.visitDate}</td>
-                    <td>{visit?.visitTime}</td>
+            {patientInfo?.previousVisits?.length ? (
+              <table className="previous-visits table table-striped w-lg-100 w-md-auto">
+                <thead>
+                  <tr>
+                    <td>السبب</td>
+                    <td>التاريخ</td>
+                    <td>الموعد</td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {patientInfo?.previousVisits?.map((visit, index) => (
+                    <tr key={index}>
+                      <td>{visit?.reason}</td>
+                      <td>{visit?.visitDate}</td>
+                      <td>{visit?.visitTime}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : <p>لايوجد زيارات سابقة</p>}
           </div>
           <div className="next-visits">
             <h4 className="title">الزيارة القادمة:-</h4>
@@ -413,7 +415,7 @@ const PatientDetails = () => {
                         ...patientInfo?.nextVisit,
                         reason: e.currentTarget.value,
                       },
-                    });
+                    })
                   }}
                 >
                   <option value="أشعة عادية">أشعة عادية</option>
@@ -450,7 +452,7 @@ const PatientDetails = () => {
                         ...patientInfo?.nextVisit,
                         visitTime: e.currentTarget.value,
                       },
-                    });
+                    })
                   }}
                 />
               </div>
@@ -469,7 +471,7 @@ const PatientDetails = () => {
                         ...patientInfo?.nextVisit,
                         visitDate: e.currentTarget.value,
                       },
-                    });
+                    })
                   }}
                 />
               </div>
@@ -479,7 +481,7 @@ const PatientDetails = () => {
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PatientDetails;
+export default PatientDetails
