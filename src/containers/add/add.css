@@ -47,7 +47,8 @@
 } */
 
 .add {
-  padding: 70px 0;
+  /* padding: 70px 0; */
+  padding-bottom: 70px;
 }
 
 .add .container .page-title {
@@ -88,7 +89,7 @@
 }
 
 .add .addNewPatient > div label {
-  margin-bottom: 10px;
+  /* margin-bottom: 10px; */
   font-size: 1.2rem;
 }
 

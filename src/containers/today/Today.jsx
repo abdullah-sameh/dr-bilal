@@ -10,7 +10,7 @@ export default function Today() {
       <Navbar />
       <div className="container today">
         <select
-          class="form-select mb-3 fs-2"
+          className="form-select mb-3 fs-2"
           aria-label="Default select example"
           onChange={(e) => setTime(e.target.value)}
           value={time}
