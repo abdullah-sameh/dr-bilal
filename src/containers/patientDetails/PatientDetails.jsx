@@ -1,28 +1,81 @@
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
+import { auth, db } from "../../firebase";
 import { getPatientById } from "../../rtk/slices/patientSlice";
+import { setUser } from "../../rtk/slices/userSlice";
 import "./patientDetails.css";
 
 const PatientDetails = () => {
   const { patientId } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const patient = useSelector((state) => state.patientById);
   const [patientInfo, setpatientInfo] = useState({});
 
   useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        dispatch(setUser(user));
+      } else {
+        navigate("/");
+      }
+    });
     dispatch(getPatientById(patientId));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     setpatientInfo(patient.data);
   }, [patient]);
 
+  const editInfo = async (e) => {
+    e.preventDefault();
+    Swal.fire({
+      title: "هل أنت متأكد؟",
+      text: `من أنك تريد تعديل بيانات ${patientInfo?.name}؟`,
+      showDenyButton: true,
+      confirmButtonText: "تأكيد",
+      denyButtonText: `إالغاء`,
+    }).then(async (result) => {
+      /*Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        await setDoc(doc(db, "patients", patientId), patientInfo)
+          .then(() => {
+            dispatch(getPatientById(patientId));
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "تم التعديل بنجاح",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+            navigate("/data");
+          })
+          .catch((e) => {
+            console.log(e.message);
+            Swal.fire({
+              icon: "error",
+              title: "خطأ",
+              text: "حاول مرة أخرى!",
+            });
+          });
+      }
+    });
+  };
+
   return (
     <div className="patient-info">
       <div className="container">
-        <form className="editPatientInfo">
+        <form onSubmit={editInfo} className="editPatientInfo">
+          <h4 onClick={() => navigate("/data")} className="close">
+            X
+          </h4>
+          <h2 className="patientCode">{patientInfo?.code}</h2>
           <div className="main-info">
             <div className="name">
               <label htmlFor="patientName">اسم المريض</label>
@@ -32,7 +85,12 @@ const PatientDetails = () => {
                 id="patientName"
                 className="form-control"
                 value={patientInfo?.name || ""}
-                onChange={() => {}}
+                onChange={(e) => {
+                  setpatientInfo({
+                    ...patientInfo,
+                    name: e.currentTarget.value,
+                  });
+                }}
                 required
               />
             </div>
@@ -43,6 +101,13 @@ const PatientDetails = () => {
                 name="patientPhone"
                 id="patientPhone"
                 className="form-control"
+                value={patientInfo?.phone || ""}
+                onChange={(e) => {
+                  setpatientInfo({
+                    ...patientInfo,
+                    phone: e.currentTarget.value,
+                  });
+                }}
                 required
               />
             </div>
@@ -53,6 +118,13 @@ const PatientDetails = () => {
                 name="patientBirthDate"
                 id="patientBirthDate"
                 className="form-control"
+                value={patientInfo?.birthDate || ""}
+                onChange={(e) => {
+                  setpatientInfo({
+                    ...patientInfo,
+                    birthDate: e.currentTarget.value,
+                  });
+                }}
               />
             </div>
             <div className="job">
@@ -62,6 +134,13 @@ const PatientDetails = () => {
                 name="patientJob"
                 id="patientJob"
                 className="form-control"
+                value={patientInfo?.job || ""}
+                onChange={(e) => {
+                  setpatientInfo({
+                    ...patientInfo,
+                    job: e.currentTarget.value,
+                  });
+                }}
               />
             </div>
             <div className="adresse">
@@ -71,6 +150,13 @@ const PatientDetails = () => {
                 name="patientAdresse"
                 id="patientAdresse"
                 className="form-control"
+                value={patientInfo?.adresse || ""}
+                onChange={(e) => {
+                  setpatientInfo({
+                    ...patientInfo,
+                    adresse: e.currentTarget.value,
+                  });
+                }}
               />
             </div>
           </div>
@@ -83,6 +169,17 @@ const PatientDetails = () => {
                 name="socialStatus"
                 id="unmarried"
                 value={"unmarried"}
+                checked={
+                  document.querySelector("#unmarried")?.value ===
+                    patientInfo?.maritalStatus || false
+                }
+                onChange={(e) => {
+                  e.currentTarget.checked &&
+                    setpatientInfo({
+                      ...patientInfo,
+                      maritalStatus: e.currentTarget.value,
+                    });
+                }}
               />
 
               <label htmlFor="married">متزوج</label>
@@ -91,6 +188,17 @@ const PatientDetails = () => {
                 name="socialStatus"
                 id="married"
                 value={"married"}
+                checked={
+                  document.querySelector("#married")?.value ===
+                    patientInfo?.maritalStatus || false
+                }
+                onChange={(e) => {
+                  e.currentTarget.checked &&
+                    setpatientInfo({
+                      ...patientInfo,
+                      maritalStatus: e.currentTarget.value,
+                    });
+                }}
               />
             </div>
           </div>
@@ -98,10 +206,32 @@ const PatientDetails = () => {
             <h4 className="title">هل أنت؟</h4>
             <div className="status-container">
               <label htmlFor="pregnant">حامل</label>
-              <input type="checkbox" name="pregnant" id="pregnant" />
+              <input
+                type="checkbox"
+                name="pregnant"
+                id="pregnant"
+                checked={patientInfo?.pregnant || false}
+                onChange={(e) =>
+                  setpatientInfo({
+                    ...patientInfo,
+                    pregnant: e.currentTarget.checked,
+                  })
+                }
+              />
 
               <label htmlFor="breastfeeding">مرضعة</label>
-              <input type="checkbox" name="breastfeeding" id="breastfeeding" />
+              <input
+                type="checkbox"
+                name="breastfeeding"
+                id="breastfeeding"
+                checked={patientInfo?.breastfeeding || false}
+                onChange={(e) =>
+                  setpatientInfo({
+                    ...patientInfo,
+                    breastfeeding: e.currentTarget.checked,
+                  })
+                }
+              />
             </div>
           </div>
           <div className="sick-history">
@@ -116,6 +246,16 @@ const PatientDetails = () => {
                   name="diabetes"
                   id="diabetes"
                   value={"سكر"}
+                  checked={patientInfo?.popularSicks?.diabetes || false}
+                  onChange={(e) =>
+                    setpatientInfo({
+                      ...patientInfo,
+                      popularSicks: {
+                        ...patientInfo.popularSicks,
+                        diabetes: e.currentTarget.checked,
+                      },
+                    })
+                  }
                 />
               </div>
               <div className="sick-container">
@@ -125,6 +265,18 @@ const PatientDetails = () => {
                   name="highBloodPressure"
                   value="ضغط"
                   id="highBloodPressure"
+                  checked={
+                    patientInfo?.popularSicks?.highBloodPressure || false
+                  }
+                  onChange={(e) =>
+                    setpatientInfo({
+                      ...patientInfo,
+                      popularSicks: {
+                        ...patientInfo.popularSicks,
+                        highBloodPressure: e.currentTarget.checked,
+                      },
+                    })
+                  }
                 />
               </div>
               <div className="sick-container">
@@ -134,6 +286,16 @@ const PatientDetails = () => {
                   name="smoker"
                   id="smoker"
                   value="تدخين"
+                  checked={patientInfo?.popularSicks?.smoker || false}
+                  onChange={(e) =>
+                    setpatientInfo({
+                      ...patientInfo,
+                      popularSicks: {
+                        ...patientInfo.popularSicks,
+                        smoker: e.currentTarget.checked,
+                      },
+                    })
+                  }
                 />
               </div>
             </div>
@@ -148,6 +310,13 @@ const PatientDetails = () => {
               name="anotherSick"
               id="anotherSick"
               className="form-control"
+              value={patientInfo?.otherSicks?.join("  ") || ""}
+              onChange={(e) => {
+                setpatientInfo({
+                  ...patientInfo,
+                  otherSicks: e.currentTarget.value.toString().split("  "),
+                });
+              }}
             />
           </div>
           <div className="surgery-operations">
@@ -160,6 +329,15 @@ const PatientDetails = () => {
               name="surgeryOperations"
               id="surgeryOperations"
               className="form-control"
+              value={patientInfo?.previousSurgeryOperations?.join("  ") || ""}
+              onChange={(e) => {
+                setpatientInfo({
+                  ...patientInfo,
+                  previousSurgeryOperations: e.currentTarget.value
+                    .toString()
+                    .split("  "),
+                });
+              }}
             />
           </div>
           <div className="allergy">
@@ -172,6 +350,13 @@ const PatientDetails = () => {
               name="patientAllergy"
               id="patientAllergy"
               className="form-control"
+              value={patientInfo?.allergy?.join("  ") || ""}
+              onChange={(e) => {
+                setpatientInfo({
+                  ...patientInfo,
+                  allergy: e.currentTarget.value.toString().split("  "),
+                });
+              }}
             />
           </div>
           <div className="opinion">
@@ -181,10 +366,38 @@ const PatientDetails = () => {
               name="patientOpinion"
               id="patientOpinion"
               className="form-control"
+              value={patientInfo?.opinion || ""}
+              onChange={(e) => {
+                setpatientInfo({
+                  ...patientInfo,
+                  opinion: e.currentTarget.value,
+                });
+              }}
             />
           </div>
+          <div className="previous-visits my-5">
+            <h4 className="title">الزيارات السابقة:-</h4>
+            <table className="previous-visits table table-striped w-lg-100 w-md-auto">
+              <thead>
+                <tr>
+                  <td>السبب</td>
+                  <td>التاريخ</td>
+                  <td>الموعد</td>
+                </tr>
+              </thead>
+              <tbody>
+                {patientInfo?.previousVisits?.map((visit, index) => (
+                  <tr key={index}>
+                    <td>{visit?.reason}</td>
+                    <td>{visit?.visitDate}</td>
+                    <td>{visit?.visitTime}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           <div className="next-visits">
-            <h4 className="title">حجز زيارة:-</h4>
+            <h4 className="title">الزيارة القادمة:-</h4>
             <div className="content">
               <div className="reason">
                 <label htmlFor="illness">سبب الزيارة</label>
@@ -192,6 +405,16 @@ const PatientDetails = () => {
                   className="form-control w-auto"
                   name="illness"
                   id="illness"
+                  value={patientInfo?.nextVisit?.reason || "أشعة عادية"}
+                  onChange={(e) => {
+                    setpatientInfo({
+                      ...patientInfo,
+                      nextVisit: {
+                        ...patientInfo?.nextVisit,
+                        reason: e.currentTarget.value,
+                      },
+                    });
+                  }}
                 >
                   <option value="أشعة عادية">أشعة عادية</option>
                   <option value="حشو بلاتين">حشو بلاتين</option>
@@ -219,7 +442,16 @@ const PatientDetails = () => {
                   type="time"
                   id="visitTime"
                   name="visitTime"
-                  lang="ar-SA"
+                  value={patientInfo?.nextVisit?.visitTime || "00:00"}
+                  onChange={(e) => {
+                    setpatientInfo({
+                      ...patientInfo,
+                      nextVisit: {
+                        ...patientInfo?.nextVisit,
+                        visitTime: e.currentTarget.value,
+                      },
+                    });
+                  }}
                 />
               </div>
               <div className="visit-date">
@@ -229,7 +461,16 @@ const PatientDetails = () => {
                   type="date"
                   id="visitDate"
                   name="visitDate"
-                  lang="fr-CA"
+                  value={patientInfo?.nextVisit?.visitDate || ""}
+                  onChange={(e) => {
+                    setpatientInfo({
+                      ...patientInfo,
+                      nextVisit: {
+                        ...patientInfo?.nextVisit,
+                        visitDate: e.currentTarget.value,
+                      },
+                    });
+                  }}
                 />
               </div>
             </div>
