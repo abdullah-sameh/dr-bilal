@@ -12,11 +12,16 @@
   --transition-time: 0.2s;
   --font: "Tajawal", sans-serif;
 }
+select:focus {
+  box-shadow: none !important;
+}
 
-/* :is(input, a, ul, li) {
-  all: initial;
-} */
-
+:is(select):hover {
+  cursor: pointer;
+}
+[type='time'] {
+  display: flex;
+}
 a {
   user-select: none;
 }
