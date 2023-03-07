@@ -28,6 +28,22 @@
   -ms-border-radius: 15px;
   -o-border-radius: 15px;
   padding: 20px;
+  position: relative;
+}
+
+.patient-info .editPatientInfo .close {
+  position: absolute;
+  left: 15px;
+  top: 15px;
+  background-color: var(--blue);
+  color: var(--white);
+  padding: 5px 10px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  cursor: pointer;
 }
 
 .patient-info .editPatientInfo .main-info,

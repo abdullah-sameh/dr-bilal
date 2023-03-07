@@ -31,17 +31,6 @@ export default function Add() {
   const handlePatientData = async (e) => {
     e.preventDefault();
     let formData = e.target;
-    let diseases = [];
-
-    //get all diseases from new patient form
-    formData.diabetes.checked && diseases.push(formData.diabetes.value);
-    formData.highBloodPressure.checked &&
-      diseases.push(formData.highBloodPressure.value);
-    formData.smoker.checked && diseases.push(formData.smoker.value);
-    formData.anotherSick.value.toString().trim().length !== 0 &&
-      diseases.push(
-        ...formData.anotherSick.value.toString().trim().split("  ")
-      );
 
     // get all aptient data
     let patient = {
@@ -51,18 +40,28 @@ export default function Add() {
       job: formData.patientJob.value,
       adresse: formData.patientAdresse.value,
       maritalStatus: formData.socialStatus.value,
-      sickHistory: diseases,
+      otherSicks: formData.anotherSick.value.toString().trim().split("  "),
+      popularSicks: {
+        diabetes: formData.diabetes.checked,
+        highBloodPressure: formData.highBloodPressure.checked,
+        smoker: formData.smoker.checked,
+      },
+      pregnant: formData.pregnant.checked,
+      breastfeeding: formData.breastfeeding.checked,
       previousSurgeryOperations: formData.surgeryOperations.value
         .toString()
         .trim()
         .split("  "),
       allergy: formData.patientAllergy.value.toString().trim().split("  "),
       previousVisits: [],
-      nextVisit: {
-        reason: formData.illness.value,
-        visitTime: formData.visitTime.value,
-        visitDate: formData.visitDate.value,
-      },
+      nextVisit:
+        formData.illness.value !== ""
+          ? {
+              reason: formData.illness.value,
+              visitTime: formData.visitTime.value,
+              visitDate: formData.visitDate.value,
+            }
+          : {},
       opinion: formData.patientOpinion.value,
     };
 
@@ -316,6 +315,9 @@ export default function Add() {
                     name="illness"
                     id="illness"
                   >
+                    <option value="" disabled>
+                      ---اختر---
+                    </option>
                     <option value="أشعة عادية">أشعة عادية</option>
                     <option value="حشو بلاتين">حشو بلاتين</option>
                     <option value="حشو كمبوزت">حشو كمبوزت</option>
@@ -342,7 +344,6 @@ export default function Add() {
                     type="time"
                     id="visitTime"
                     name="visitTime"
-                    lang="ar-SA"
                   />
                 </div>
                 <div className="visit-date">
@@ -352,7 +353,6 @@ export default function Add() {
                     type="date"
                     id="visitDate"
                     name="visitDate"
-                    lang="fr-CA"
                   />
                 </div>
               </div>
