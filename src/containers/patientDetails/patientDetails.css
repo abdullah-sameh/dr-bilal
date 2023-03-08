@@ -38,7 +38,7 @@
   top: 15px;
   background-color: var(--blue);
   color: var(--white);
-  padding: 5px 10px;
+  padding: 10px 10px 0;
   border-radius: 5px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
@@ -47,7 +47,10 @@
   cursor: pointer;
 }
 
-.patient-info .editPatientInfo .main-info,
+.patient-info .editPatientInfo .main-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+}
 .patient-info .editPatientInfo .next-visits .content {
   display: flex;
   flex-wrap: wrap;
@@ -66,7 +69,7 @@
 }
 
 .patient-info .editPatientInfo > div label {
-  margin-bottom: 10px;
+  /* margin-bottom: 10px; */
   font-size: 1.2rem;
 }
 

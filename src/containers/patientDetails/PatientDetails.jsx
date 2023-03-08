@@ -377,24 +377,28 @@ const PatientDetails = () => {
           </div>
           <div className="previous-visits my-5">
             <h4 className="title">الزيارات السابقة:-</h4>
-            <table className="previous-visits table table-striped w-lg-100 w-md-auto">
-              <thead>
-                <tr>
-                  <td>السبب</td>
-                  <td>التاريخ</td>
-                  <td>الموعد</td>
-                </tr>
-              </thead>
-              <tbody>
-                {patientInfo?.previousVisits?.map((visit, index) => (
-                  <tr key={index}>
-                    <td>{visit?.reason}</td>
-                    <td>{visit?.visitDate}</td>
-                    <td>{visit?.visitTime}</td>
+            {patientInfo?.previousVisits?.length ? (
+              <table className="previous-visits table table-striped w-lg-100 w-md-auto">
+                <thead>
+                  <tr>
+                    <td>السبب</td>
+                    <td>التاريخ</td>
+                    <td>الموعد</td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {patientInfo?.previousVisits?.map((visit, index) => (
+                    <tr key={index}>
+                      <td>{visit?.reason}</td>
+                      <td>{visit?.visitDate}</td>
+                      <td>{visit?.visitTime}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p>لايوجد زيارات سابقة</p>
+            )}
           </div>
           <div className="next-visits">
             <h4 className="title">الزيارة القادمة:-</h4>

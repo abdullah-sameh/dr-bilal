@@ -72,8 +72,8 @@
 
 .add .addNewPatient .main-info,
 .add .addNewPatient .next-visits .content {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 }
 
 @media (max-width: 768px) {
