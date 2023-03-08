@@ -3,6 +3,9 @@ nav {
   background: var(--blue) !important;
   margin-bottom: 20px;
   padding: 0 !important;
+  position: sticky !important;
+  top: 0;
+  z-index: 5;
 }
 
 nav .container {

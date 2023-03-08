@@ -125,10 +125,15 @@ export default function Data() {
                         ].visitDate}
                   </td>
                   <td>
-                    <Link to={`./${patient?.id}`}>تفاصيل</Link>
+                    <Link
+                      className="btn btn-primary mx-1"
+                      to={`./${patient?.id}`}
+                    >
+                      تفاصيل
+                    </Link>
                     <button
                       onClick={() => deletePatient(patient?.id)}
-                      className="delete"
+                      className="delete btn btn-danger mx-1"
                     >
                       حذف
                     </button>

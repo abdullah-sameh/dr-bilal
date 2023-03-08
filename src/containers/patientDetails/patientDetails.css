@@ -29,6 +29,7 @@
   -o-border-radius: 15px;
   padding: 20px;
   position: relative;
+  z-index: 51;
 }
 
 .patient-info .editPatientInfo .close {

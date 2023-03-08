@@ -56,9 +56,9 @@ export default function Navbar() {
       <nav className="navbar navbar-expand-lg">
         <div className="container">
           {/*eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-          <a className="navbar-brand" href="">
+          <Link to={"/"} className="navbar-brand" href="">
             <img src={logo} alt="araac_logo" /> <span>آراك</span>
-          </a>
+          </Link>
           <button
             className="navbar-toggler"
             type="button"
@@ -88,8 +88,8 @@ export default function Navbar() {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/today-book" className={` nav-link`}>
-                  حجوزات اليوم
+                <Link to="/reservations" className={` nav-link`}>
+                  الحجوزات
                 </Link>
               </li>
               <li className="nav-item">

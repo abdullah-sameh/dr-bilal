@@ -54,7 +54,7 @@ const PatientDetails = () => {
               showConfirmButton: false,
               timer: 1500,
             });
-            navigate("/data");
+            navigate("../");
           })
           .catch((e) => {
             console.log(e.message);
@@ -72,7 +72,7 @@ const PatientDetails = () => {
     <div className="patient-info">
       <div className="container">
         <form onSubmit={editInfo} className="editPatientInfo">
-          <h4 onClick={() => navigate("/data")} className="close">
+          <h4 onClick={() => navigate("../")} className="close">
             X
           </h4>
           <h2 className="patientCode">{patientInfo?.code}</h2>

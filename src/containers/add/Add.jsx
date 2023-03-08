@@ -60,6 +60,7 @@ export default function Add() {
               reason: formData.illness.value,
               visitTime: formData.visitTime.value,
               visitDate: formData.visitDate.value,
+              firstTime: formData.firstTime.checked,
             }
           : {},
       opinion: formData.patientOpinion.value,
@@ -353,6 +354,17 @@ export default function Add() {
                     type="date"
                     id="visitDate"
                     name="visitDate"
+                  />
+                </div>
+                <div className="first-time">
+                  <label htmlFor="firstTime">
+                    هل هذه أول زيارة لنفس المرض؟
+                  </label>
+                  <input
+                    className="mx-2"
+                    type="checkbox"
+                    id="firstTime"
+                    name="firstTime"
                   />
                 </div>
               </div>

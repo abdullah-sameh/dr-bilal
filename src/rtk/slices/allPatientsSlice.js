@@ -5,7 +5,7 @@ import { db } from "../../firebase";
 export const getAllPatients = createAsyncThunk(
   "allPatientsSlice/getAllPatients",
   async () => {
-    const q = query(collection(db, "patients"), orderBy("name", "asc"));
+    const q = query(collection(db, "patients"), orderBy("code", "asc"));
     let allPatients = [];
     const allDocs = await getDocs(q);
     allDocs.forEach((doc) => {

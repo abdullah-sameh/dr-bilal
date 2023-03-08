@@ -27,10 +27,7 @@ table.data-table tr {
 
 table.data-table a,
 table.data-table button {
-  all: initial;
   font: 500 18px var(--font);
-  color: var(--white);
-  background: var(--blue);
   padding: 5px;
   cursor: pointer;
   transition: var(--transition-time);
@@ -53,11 +50,6 @@ table.data-table button {
   table.data-table {
     font-size: 0.8em;
   }
-}
-
-table.data-table button.delete {
-  background-color: rgb(205, 0, 0);
-  margin-right: 10px;
 }
 
 @media (max-width: 350px) {
