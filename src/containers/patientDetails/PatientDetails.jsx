@@ -1,40 +1,59 @@
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import Swal from "sweetalert2";
-import { auth, db } from "../../firebase";
-import { getPatientById } from "../../rtk/slices/patientSlice";
-import { setUser } from "../../rtk/slices/userSlice";
-import "./patientDetails.css";
+import { onAuthStateChanged } from "firebase/auth"
+import { doc, setDoc } from "firebase/firestore"
+import React, { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { useNavigate, useParams } from "react-router-dom"
+import Select from "react-select"
+import Swal from "sweetalert2"
+import { auth, db } from "../../firebase"
+import { getPatientById } from "../../rtk/slices/patientSlice"
+import { setUser } from "../../rtk/slices/userSlice"
+import "./patientDetails.css"
 
 const PatientDetails = () => {
-  const { patientId } = useParams();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const { patientId } = useParams()
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
-  const patient = useSelector((state) => state.patientById);
-  const [patientInfo, setpatientInfo] = useState({});
+  const patient = useSelector((state) => state.patientById)
+  const [patientInfo, setpatientInfo] = useState({})
+
+  const services = [
+    { value: "كشف", label: "كشف" },
+    { value: "أشعة عادية", label: "أشعة عادية" },
+    { value: "حشو بلاتين", label: "حشو بلاتين" },
+    { value: "حشو كمبوزت", label: "حشو كمبوزت" },
+    { value: "حشو عصب", label: "حشو عصب" },
+    { value: "حشو عادى أطفال", label: "حشو عادى أطفال" },
+    { value: "حشو عصب أطفال", label: "حشو عصب أطفال" },
+    { value: "طاقم متحرك", label: "طاقم متحرك" },
+    { value: "خلع عادي", label: "خلع عادي" },
+    { value: "خلع ضرس عقل", label: "خلع ضرس عقل" },
+    { value: "طربوش", label: "طربوش" },
+    { value: "كوبري", label: "كوبري" },
+    { value: "تنظيف جير", label: "تنظيف جير" },
+    { value: "تبييض", label: "تبييض" },
+    { value: "علاج", label: "علاج" },
+  ]
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        dispatch(setUser(user));
+        dispatch(setUser(user))
       } else {
-        navigate("/");
+        navigate("/")
       }
-    });
-    dispatch(getPatientById(patientId));
+    })
+    dispatch(getPatientById(patientId))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [])
 
   useEffect(() => {
-    setpatientInfo(patient.data);
-  }, [patient]);
+    setpatientInfo(patient.data)
+  }, [patient])
 
   const editInfo = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     Swal.fire({
       title: "هل أنت متأكد؟",
       text: `من أنك تريد تعديل بيانات ${patientInfo?.name}؟`,
@@ -46,27 +65,27 @@ const PatientDetails = () => {
       if (result.isConfirmed) {
         await setDoc(doc(db, "patients", patientId), patientInfo)
           .then(() => {
-            dispatch(getPatientById(patientId));
+            dispatch(getPatientById(patientId))
             Swal.fire({
               position: "center",
               icon: "success",
               title: "تم التعديل بنجاح",
               showConfirmButton: false,
               timer: 1500,
-            });
-            navigate("../");
+            })
+            navigate("../")
           })
           .catch((e) => {
-            console.log(e.message);
+            console.log(e.message)
             Swal.fire({
               icon: "error",
               title: "خطأ",
               text: "حاول مرة أخرى!",
-            });
-          });
+            })
+          })
       }
-    });
-  };
+    })
+  }
 
   return (
     <div className="patient-info">
@@ -81,6 +100,7 @@ const PatientDetails = () => {
               <label htmlFor="patientName">اسم المريض</label>
               <input
                 type="text"
+                disabled
                 name="patientName"
                 id="patientName"
                 className="form-control"
@@ -89,7 +109,7 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     name: e.currentTarget.value,
-                  });
+                  })
                 }}
                 required
               />
@@ -106,7 +126,7 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     phone: e.currentTarget.value,
-                  });
+                  })
                 }}
                 required
               />
@@ -123,7 +143,7 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     birthDate: e.currentTarget.value,
-                  });
+                  })
                 }}
               />
             </div>
@@ -139,7 +159,7 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     job: e.currentTarget.value,
-                  });
+                  })
                 }}
               />
             </div>
@@ -155,7 +175,7 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     adresse: e.currentTarget.value,
-                  });
+                  })
                 }}
               />
             </div>
@@ -178,7 +198,7 @@ const PatientDetails = () => {
                     setpatientInfo({
                       ...patientInfo,
                       maritalStatus: e.currentTarget.value,
-                    });
+                    })
                 }}
               />
 
@@ -197,7 +217,7 @@ const PatientDetails = () => {
                     setpatientInfo({
                       ...patientInfo,
                       maritalStatus: e.currentTarget.value,
-                    });
+                    })
                 }}
               />
             </div>
@@ -315,7 +335,7 @@ const PatientDetails = () => {
                 setpatientInfo({
                   ...patientInfo,
                   otherSicks: e.currentTarget.value.toString().split("  "),
-                });
+                })
               }}
             />
           </div>
@@ -336,7 +356,7 @@ const PatientDetails = () => {
                   previousSurgeryOperations: e.currentTarget.value
                     .toString()
                     .split("  "),
-                });
+                })
               }}
             />
           </div>
@@ -355,7 +375,7 @@ const PatientDetails = () => {
                 setpatientInfo({
                   ...patientInfo,
                   allergy: e.currentTarget.value.toString().split("  "),
-                });
+                })
               }}
             />
           </div>
@@ -371,7 +391,7 @@ const PatientDetails = () => {
                 setpatientInfo({
                   ...patientInfo,
                   opinion: e.currentTarget.value,
-                });
+                })
               }}
             />
           </div>
@@ -405,7 +425,22 @@ const PatientDetails = () => {
             <div className="content">
               <div className="reason">
                 <label htmlFor="illness">سبب الزيارة</label>
-                <select
+                <Select
+                  name="illness"
+                  id="illness"
+                  value={patientInfo?.nextVisit?.reason || "كشف"}
+                  onChange={(e) => {
+                    setpatientInfo({
+                      ...patientInfo,
+                      nextVisit: {
+                        ...patientInfo?.nextVisit,
+                        reason: e.currentTarget.value,
+                      },
+                    })
+                  }}
+                  options={services}
+                />
+                {/* <select
                   className="form-control w-auto"
                   name="illness"
                   id="illness"
@@ -437,7 +472,7 @@ const PatientDetails = () => {
                   <option value="تلميع">تلميع</option>
                   <option value="تبييض">تبييض</option>
                   <option value="علاج">علاج</option>
-                </select>
+                </select> */}
               </div>
               <div className="visit-time">
                 <label htmlFor="visitTime">موعد الزيارة</label>
@@ -454,7 +489,7 @@ const PatientDetails = () => {
                         ...patientInfo?.nextVisit,
                         visitTime: e.currentTarget.value,
                       },
-                    });
+                    })
                   }}
                 />
               </div>
@@ -473,7 +508,7 @@ const PatientDetails = () => {
                         ...patientInfo?.nextVisit,
                         visitDate: e.currentTarget.value,
                       },
-                    });
+                    })
                   }}
                 />
               </div>
@@ -483,7 +518,7 @@ const PatientDetails = () => {
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PatientDetails;
+export default PatientDetails

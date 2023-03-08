@@ -69,11 +69,18 @@
   -ms-border-radius: 10px;
   -o-border-radius: 10px;
 }
-
+.add .addNewPatient {
+  display: grid;
+  justify-items: center;
+}
 .add .addNewPatient .main-info,
 .add .addNewPatient .next-visits .content {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.next-visits .content label + div#illness {
+  width: 200px;
 }
 
 @media (max-width: 768px) {
@@ -130,4 +137,20 @@
   -moz-transform: scale(1.1);
   -ms-transform: scale(1.1);
   -o-transform: scale(1.1);
+}
+
+/* :is(
+    .birth-date,
+    .job,
+    .adresse,
+    .marital-status,
+    .pregnant-status,
+    .sick-history,
+    .more-sicks,
+    .surgery-operations,
+    .allergy,
+    .opinion
+  ) { */
+.none {
+  display: none;
 }

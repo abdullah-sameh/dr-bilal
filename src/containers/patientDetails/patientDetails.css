@@ -111,3 +111,9 @@
   -ms-transform: scale(1.1);
   -o-transform: scale(1.1);
 }
+
+
+.patient-info div.css-1nmdiq5-menu {
+  top: -310px;
+  box-shadow: 0 0 10px rgb(0, 0, 0 / .5);
+}

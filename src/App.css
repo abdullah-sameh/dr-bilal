@@ -31,3 +31,19 @@ body {
   direction: rtl;
   font-family: var(--font) !important;
 }
+  
+/* for select element */
+.css-b62m3t-container {
+  padding: 0 ;
+}
+
+/* for scroll bar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--white);       
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--blue);
+}
