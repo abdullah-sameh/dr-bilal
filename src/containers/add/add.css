@@ -154,3 +154,19 @@
 .none {
   display: none;
 }
+:is(.visit-date, .visit-time) > div {
+  background: #fff;
+  direction: ltr;
+  display: flex;
+}
+:is(.visit-date, .visit-time) > div input {
+  padding: 8px 5px !important;
+}
+:is(.visit-date, .visit-time) > div button {
+  padding: 5px !important;
+}
+
+/* for customize hour lock */
+.css-trxt40-MuiTimePickerToolbar-hourMinuteLabel {
+  flex-direction: row-reverse;
+}

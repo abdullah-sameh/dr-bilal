@@ -1,6 +1,7 @@
 import "./add.css"
 import Navbar from "../../components/navbar/Navbar"
 import { useNavigate } from "react-router-dom"
+import { DatePicker } from "@mui/x-date-pickers/DatePicker"
 // import { useReducer } from "react";
 // import { next, undo } from "../../components/tools";
 import { useDispatch } from "react-redux"
@@ -12,6 +13,7 @@ import { motion } from "framer-motion"
 import { addDoc, collection, getDoc, doc, setDoc } from "firebase/firestore"
 import Swal from "sweetalert2"
 import Select from "react-select"
+import { MobileTimePicker } from "@mui/x-date-pickers"
 
 export default function Add() {
   const dispatch = useDispatch()
@@ -52,41 +54,41 @@ export default function Add() {
 
     // get all aptient data
     let patient = {
-      name: formData.patientName.value,
-      phone: formData.patientPhone.value,
-      birthDate: formData.patientBirthDate.value,
-      job: formData.patientJob.value,
-      adresse: formData.patientAdresse.value,
-      maritalStatus: formData.socialStatus.value,
-      otherSicks: formData.anotherSick.value.toString().trim().split("  "),
+      name: formData?.patientName?.value,
+      phone: formData?.patientPhone?.value,
+      birthDate: formData?.patientBirthDate?.value,
+      job: formData?.patientJob?.value,
+      adresse: formData?.patientAdresse?.value,
+      maritalStatus: formData?.socialStatus?.value,
+      otherSicks: formData?.anotherSick?.value.toString().trim().split("  "),
       popularSicks: {
-        diabetes: formData.diabetes.checked,
-        highBloodPressure: formData.highBloodPressure.checked,
-        smoker: formData.smoker.checked,
+        diabetes: formData?.diabetes?.checked,
+        highBloodPressure: formData?.highBloodPressure?.checked,
+        smoker: formData?.smoker?.checked,
       },
-      pregnant: formData.pregnant.checked,
-      breastfeeding: formData.breastfeeding.checked,
-      previousSurgeryOperations: formData.surgeryOperations.value
+      pregnant: formData?.pregnant?.checked,
+      breastfeeding: formData?.breastfeeding?.checked,
+      previousSurgeryOperations: formData?.surgeryOperations?.value
         .toString()
         .trim()
         .split("  "),
-      allergy: formData.patientAllergy.value.toString().trim().split("  "),
+      allergy: formData?.patientAllergy?.value.toString().trim().split("  "),
       previousVisits: [],
       nextVisit:
-        formData.illness.value !== ""
+        formData?.illness?.value !== ""
           ? {
-              reason: formData.illness.value,
-              visitTime: formData.visitTime.value,
-              visitDate: formData.visitDate.value,
-              firstTime: formData.firstTime.checked,
+              reason: formData?.illness?.value,
+              visitTime: formData?.visitTime?.value,
+              visitDate: formData?.visitDate?.value,
+              firstTime: formData?.firstTime?.checked,
             }
           : {},
-      opinion: formData.patientOpinion.value,
+      opinion: formData?.patientOpinion?.value,
     }
 
     Swal.fire({
       title: "هل أنت متأكد؟",
-      text: `من أنك تريد حجز موعد ل ${formData.patientName.value}`,
+      text: `من أنك تريد حجز موعد ل ${formData?.patientName?.value}`,
       showDenyButton: true,
       confirmButtonText: "تأكيد",
       denyButtonText: `إالغاء`,
@@ -180,7 +182,6 @@ export default function Add() {
                   name="patientPhone"
                   id="patientPhone"
                   className="form-control"
-                  pattern="^01[0125][0-9]{8}$"
                   required
                 />
               </div>
@@ -334,11 +335,7 @@ export default function Add() {
               <div className="content">
                 <div className="reason">
                   <label htmlFor="illness">سبب الزيارة</label>
-                  <Select
-                    name="illness"
-                    id="illness"
-                    options={services}
-                  />
+                  <Select name="illness" id="illness" options={services} />
                   {/* <select
                     className="form-control w-auto"
                     name="illness"
@@ -366,25 +363,26 @@ export default function Add() {
                     <option value="علاج">علاج</option>
                   </select> */}
                 </div>
+                <div className="visit-date">
+                  <label htmlFor="visitDate">تاريخ الزيارة</label>
+                  <DatePicker
+                    id="visitDate"
+                    name="visitDate"
+                    openTo="month"
+                    views={["year", "month", "day"]}
+                  />
+                </div>
                 <div className="visit-time">
                   <label htmlFor="visitTime">موعد الزيارة</label>
-                  <input
+                  {/* <input
                     className="form-control w-auto"
                     type="time"
                     id="visitTime"
                     name="visitTime"
-                  />
+                  /> */}
+                  <MobileTimePicker views={["hours", "minutes"]} />
                 </div>
-                <div className="visit-date">
-                  <label htmlFor="visitDate">تاريخ الزيارة</label>
-                  <input
-                    className="form-control w-auto"
-                    type="date"
-                    id="visitDate"
-                    name="visitDate"
-                  />
-                </div>
-                {/* <div className="first-time">
+                <div className="first-time">
                   <label htmlFor="firstTime">
                     هل هذه أول زيارة لنفس المرض؟
                   </label>
@@ -394,7 +392,7 @@ export default function Add() {
                     id="firstTime"
                     name="firstTime"
                   />
-                </div> */}
+                </div>
               </div>
             </div>
             <button type="submit">تسجيل</button>

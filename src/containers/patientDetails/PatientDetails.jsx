@@ -425,7 +425,7 @@ const PatientDetails = () => {
             <div className="content">
               <div className="reason">
                 <label htmlFor="illness">سبب الزيارة</label>
-                <Select
+                {/* <Select
                   name="illness"
                   id="illness"
                   value={patientInfo?.nextVisit?.reason || "كشف"}
@@ -439,8 +439,8 @@ const PatientDetails = () => {
                     })
                   }}
                   options={services}
-                />
-                {/* <select
+                /> */}
+                <select
                   className="form-control w-auto"
                   name="illness"
                   id="illness"
@@ -472,7 +472,7 @@ const PatientDetails = () => {
                   <option value="تلميع">تلميع</option>
                   <option value="تبييض">تبييض</option>
                   <option value="علاج">علاج</option>
-                </select> */}
+                </select>
               </div>
               <div className="visit-time">
                 <label htmlFor="visitTime">موعد الزيارة</label>
