@@ -1,3 +1,5 @@
+import { DatePicker, MobileTimePicker } from "@mui/x-date-pickers"
+import dayjs from "dayjs"
 import { onAuthStateChanged } from "firebase/auth"
 import { doc, setDoc } from "firebase/firestore"
 import React, { useEffect, useState } from "react"
@@ -17,6 +19,7 @@ const PatientDetails = () => {
 
   const patient = useSelector((state) => state.patientById)
   const [patientInfo, setpatientInfo] = useState({})
+  const [reasonSelected, setReasonSelected] = useState()
 
   const services = [
     { value: "كشف", label: "كشف" },
@@ -34,6 +37,7 @@ const PatientDetails = () => {
     { value: "تنظيف جير", label: "تنظيف جير" },
     { value: "تبييض", label: "تبييض" },
     { value: "علاج", label: "علاج" },
+    { value: "تقويم", label: "تقويم" },
   ]
 
   useEffect(() => {
@@ -425,22 +429,27 @@ const PatientDetails = () => {
             <div className="content">
               <div className="reason">
                 <label htmlFor="illness">سبب الزيارة</label>
-                {/* <Select
+                <Select
                   name="illness"
                   id="illness"
-                  value={patientInfo?.nextVisit?.reason || "كشف"}
-                  onChange={(e) => {
+                  value={{
+                    value: patientInfo?.data?.nextVisit?.reason || "كشف",
+                    label: patientInfo?.data?.nextVisit?.reason || "كشف",
+                  }}
+                  onChange={(reason) => {
+                    console.log(reason)
                     setpatientInfo({
                       ...patientInfo,
                       nextVisit: {
                         ...patientInfo?.nextVisit,
-                        reason: e.currentTarget.value,
+                        reason: reason,
                       },
                     })
                   }}
                   options={services}
-                /> */}
-                <select
+                />
+
+                {/* <select
                   className="form-control w-auto"
                   name="illness"
                   id="illness"
@@ -472,11 +481,34 @@ const PatientDetails = () => {
                   <option value="تلميع">تلميع</option>
                   <option value="تبييض">تبييض</option>
                   <option value="علاج">علاج</option>
-                </select>
+                </select> */}
               </div>
               <div className="visit-time">
                 <label htmlFor="visitTime">موعد الزيارة</label>
-                <input
+                <MobileTimePicker
+                  className="form-control w-auto"
+                  id="visitTime"
+                  name="visitTime"
+                  views={["hours", "minutes"]}
+                  value={dayjs(new Date())
+                    .hour(+patient?.data?.nextVisit?.visitTime.split(":")[0]) 
+                    .minute(+patient?.data?.nextVisit?.visitTime.split(":")[1])}
+                  onChange={(time) =>
+                    setpatientInfo({
+                      ...patientInfo,
+                      nextVisit: {
+                        ...patientInfo?.nextVisit,
+                        visitTime: time,
+                      },
+                    })
+                  }
+                  slotProps={{
+                    textField: {
+                      helperText: "HH:MM aa",
+                    },
+                  }}
+                />
+                {/* <input
                   className="form-control w-auto"
                   type="time"
                   id="visitTime"
@@ -491,11 +523,36 @@ const PatientDetails = () => {
                       },
                     })
                   }}
-                />
+                /> */}
               </div>
               <div className="visit-date">
                 <label htmlFor="visitDate">تاريخ الزيارة</label>
-                <input
+                <DatePicker
+                  id="visitDate"
+                  name="visitDate"
+                  value={dayjs(new Date())
+                    .date(+(patientInfo?.nextVisit?.visitDate.split("-")[2]))
+                    .month(+(patientInfo?.nextVisit?.visitDate.split("-")[1]) - 1)
+                    .year(+(patientInfo?.nextVisit?.visitDate.split("-")[0]))}
+                  onChange={(date) =>
+                    setpatientInfo({
+                      ...patientInfo,
+                      nextVisit: {
+                        ...patientInfo?.nextVisit,
+                        visitDate: date,
+                      },
+                    })
+                  }
+                  views={["year", "month", "day"]}
+                  openTo="month"
+                  format="DD/MM/YYYY"
+                  slotProps={{
+                    textField: {
+                      helperText: "DD / MM / YYYY",
+                    },
+                  }}
+                />
+                {/* <input
                   className="form-control w-auto"
                   type="date"
                   id="visitDate"
@@ -510,7 +567,7 @@ const PatientDetails = () => {
                       },
                     })
                   }}
-                />
+                /> */}
               </div>
             </div>
           </div>

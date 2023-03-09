@@ -139,25 +139,20 @@
   -o-transform: scale(1.1);
 }
 
-/* :is(
-    .birth-date,
-    .job,
-    .adresse,
-    .marital-status,
-    .pregnant-status,
-    .sick-history,
-    .more-sicks,
-    .surgery-operations,
-    .allergy,
-    .opinion
-  ) { */
+
 .none {
   display: none;
 }
+/* for customize date and time picker */
 :is(.visit-date, .visit-time) > div {
   background: #fff;
   direction: ltr;
   display: flex;
+}
+:is(.visit-date, .visit-time) > div > div + p {
+  background: var(--white);
+  margin: 0;
+  padding: 5px ;
 }
 :is(.visit-date, .visit-time) > div input {
   padding: 8px 5px !important;
@@ -165,8 +160,6 @@
 :is(.visit-date, .visit-time) > div button {
   padding: 5px !important;
 }
-
-/* for customize hour lock */
 .css-trxt40-MuiTimePickerToolbar-hourMinuteLabel {
   flex-direction: row-reverse;
 }

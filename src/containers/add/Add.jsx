@@ -5,7 +5,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker"
 // import { useReducer } from "react";
 // import { next, undo } from "../../components/tools";
 import { useDispatch } from "react-redux"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { onAuthStateChanged } from "firebase/auth"
 import { auth, db } from "../../firebase"
 import { setUser } from "../../rtk/slices/userSlice"
@@ -14,10 +14,14 @@ import { addDoc, collection, getDoc, doc, setDoc } from "firebase/firestore"
 import Swal from "sweetalert2"
 import Select from "react-select"
 import { MobileTimePicker } from "@mui/x-date-pickers"
+import dayjs from "dayjs"
 
 export default function Add() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const [selectedDate, setSelectedDate] = useState(dayjs())
+  const [selectedTime, setSelectedTime] = useState(dayjs())
+  const [visitReason, setVisitReason] = useState()
 
   const services = [
     { value: "كشف", label: "كشف" },
@@ -35,6 +39,7 @@ export default function Add() {
     { value: "تنظيف جير", label: "تنظيف جير" },
     { value: "تبييض", label: "تبييض" },
     { value: "علاج", label: "علاج" },
+    { value: "تقويم", label: "تقويم" },
   ]
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -51,7 +56,6 @@ export default function Add() {
   const handlePatientData = async (e) => {
     e.preventDefault()
     let formData = e.target
-
     // get all aptient data
     let patient = {
       name: formData?.patientName?.value,
@@ -77,15 +81,15 @@ export default function Add() {
       nextVisit:
         formData?.illness?.value !== ""
           ? {
-              reason: formData?.illness?.value,
-              visitTime: formData?.visitTime?.value,
-              visitDate: formData?.visitDate?.value,
-              firstTime: formData?.firstTime?.checked,
+              reason: visitReason.value,
+              visitTime: `${selectedTime.get("hour")}:${selectedTime.get('minute')}`,
+              visitDate: selectedDate?.format("YYYY-MM-DD"),
+              firstTime: true,
             }
           : {},
       opinion: formData?.patientOpinion?.value,
     }
-
+    
     Swal.fire({
       title: "هل أنت متأكد؟",
       text: `من أنك تريد حجز موعد ل ${formData?.patientName?.value}`,
@@ -335,11 +339,18 @@ export default function Add() {
               <div className="content">
                 <div className="reason">
                   <label htmlFor="illness">سبب الزيارة</label>
-                  <Select name="illness" id="illness" options={services} />
+                  <Select
+                    name="illness"
+                    id="illness"
+                    options={services}
+                    value={visitReason}
+                    onChange={(reason) => setVisitReason(reason)}
+                  />
                   {/* <select
                     className="form-control w-auto"
                     name="illness"
                     id="illness"
+                    </option>
                   >
                     <option value="" disabled>
                       ---اختر---
@@ -367,30 +378,32 @@ export default function Add() {
                   <label htmlFor="visitDate">تاريخ الزيارة</label>
                   <DatePicker
                     id="visitDate"
-                    name="visitDate"
-                    openTo="month"
+                    value={selectedDate}
+                    onChange={(date) => setSelectedDate(date)}
                     views={["year", "month", "day"]}
+                    openTo="month"
+                    format="DD/MM/YYYY"
+                    slotProps={{
+                      textField: {
+                        helperText: "DD / MM / YYYY",
+                      },
+                    }}
                   />
                 </div>
                 <div className="visit-time">
                   <label htmlFor="visitTime">موعد الزيارة</label>
-                  {/* <input
+                  <MobileTimePicker
                     className="form-control w-auto"
-                    type="time"
                     id="visitTime"
                     name="visitTime"
-                  /> */}
-                  <MobileTimePicker views={["hours", "minutes"]} />
-                </div>
-                <div className="first-time">
-                  <label htmlFor="firstTime">
-                    هل هذه أول زيارة لنفس المرض؟
-                  </label>
-                  <input
-                    className="mx-2"
-                    type="checkbox"
-                    id="firstTime"
-                    name="firstTime"
+                    views={["hours", "minutes"]}
+                    value={selectedTime}
+                    onChange={(time) => setSelectedTime(time)}
+                    slotProps={{
+                      textField: {
+                        helperText: "HH:MM aa",
+                      },
+                    }}
                   />
                 </div>
               </div>
