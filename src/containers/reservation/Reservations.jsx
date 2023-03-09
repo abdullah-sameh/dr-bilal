@@ -13,12 +13,21 @@ import "./reservation.css"
 
 export default function Reservation() {
   const dispatch = useDispatch()
-
+  
   const [time, setTime] = useState("all")
   const [showedPatients, setShowedPatients] = useState()
   const allPatients = useSelector((state) => state.allPatients)
   const statistics = useSelector((state) => state?.statistics)
-
+  const weekDays = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ]
+  
   const timeFilterHandler = () => {
     let currentDt = new Date()
 
@@ -244,7 +253,10 @@ export default function Reservation() {
                 <td>{patient?.data?.code}</td>
                 <td>{patient?.data?.name}</td>
                 <td>{patient?.data?.nextVisit?.reason}</td>
-                <td>{patient?.data?.nextVisit?.visitDate}</td>
+                <td>
+                  {patient?.data?.nextVisit?.visitDate} --- 
+                  {weekDays[dayjs(patient?.data?.nextVisit?.visitDate).day()]}
+                </td>
                 <td style={{ direction: "ltr" }}>
                   {dayjs()
                     .hour(patient?.data?.nextVisit?.visitTime.split(":")[0])

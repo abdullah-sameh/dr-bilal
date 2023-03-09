@@ -491,7 +491,7 @@ const PatientDetails = () => {
                   name="visitTime"
                   views={["hours", "minutes"]}
                   value={dayjs(new Date())
-                    .hour(+patient?.data?.nextVisit?.visitTime.split(":")[0]) 
+                    .hour(+patient?.data?.nextVisit?.visitTime.split(":")[0])
                     .minute(+patient?.data?.nextVisit?.visitTime.split(":")[1])}
                   onChange={(time) =>
                     setpatientInfo({
@@ -531,9 +531,9 @@ const PatientDetails = () => {
                   id="visitDate"
                   name="visitDate"
                   value={dayjs(new Date())
-                    .date(+(patientInfo?.nextVisit?.visitDate.split("-")[2]))
-                    .month(+(patientInfo?.nextVisit?.visitDate.split("-")[1]) - 1)
-                    .year(+(patientInfo?.nextVisit?.visitDate.split("-")[0]))}
+                    .date(+patientInfo?.nextVisit?.visitDate.split("-")[2])
+                    .month(+patientInfo?.nextVisit?.visitDate.split("-")[1] - 1)
+                    .year(+patientInfo?.nextVisit?.visitDate.split("-")[0])}
                   onChange={(date) =>
                     setpatientInfo({
                       ...patientInfo,
