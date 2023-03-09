@@ -1,27 +1,27 @@
-import "./add.css"
-import Navbar from "../../components/navbar/Navbar"
-import { useNavigate } from "react-router-dom"
-import { DatePicker } from "@mui/x-date-pickers/DatePicker"
+import "./add.css";
+import Navbar from "../../components/navbar/Navbar";
+import { useNavigate } from "react-router-dom";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 // import { useReducer } from "react";
 // import { next, undo } from "../../components/tools";
-import { useDispatch } from "react-redux"
-import { useEffect, useState } from "react"
-import { onAuthStateChanged } from "firebase/auth"
-import { auth, db } from "../../firebase"
-import { setUser } from "../../rtk/slices/userSlice"
-import { motion } from "framer-motion"
-import { addDoc, collection, getDoc, doc, setDoc } from "firebase/firestore"
-import Swal from "sweetalert2"
-import Select from "react-select"
-import { MobileTimePicker } from "@mui/x-date-pickers"
-import dayjs from "dayjs"
+import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth, db } from "../../firebase";
+import { setUser } from "../../rtk/slices/userSlice";
+import { motion } from "framer-motion";
+import { addDoc, collection, getDoc, doc, setDoc } from "firebase/firestore";
+import Swal from "sweetalert2";
+import Select from "react-select";
+import { MobileTimePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 
 export default function Add() {
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const [selectedDate, setSelectedDate] = useState(dayjs())
-  const [selectedTime, setSelectedTime] = useState(dayjs())
-  const [visitReason, setVisitReason] = useState()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [selectedDate, setSelectedDate] = useState(dayjs());
+  const [selectedTime, setSelectedTime] = useState(dayjs());
+  const [visitReason, setVisitReason] = useState();
 
   const services = [
     { value: "كشف", label: "كشف" },
@@ -40,22 +40,22 @@ export default function Add() {
     { value: "تبييض", label: "تبييض" },
     { value: "علاج", label: "علاج" },
     { value: "تقويم", label: "تقويم" },
-  ]
+  ];
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        dispatch(setUser(user))
+        dispatch(setUser(user));
       } else {
-        navigate("/")
+        navigate("/");
       }
-    })
+    });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   const handlePatientData = async (e) => {
-    e.preventDefault()
-    let formData = e.target
+    e.preventDefault();
+    let formData = e.target;
     // get all aptient data
     let patient = {
       name: formData?.patientName?.value,
@@ -82,14 +82,16 @@ export default function Add() {
         formData?.illness?.value !== ""
           ? {
               reason: visitReason.value,
-              visitTime: `${selectedTime.get("hour")}:${selectedTime.get('minute')}`,
+              visitTime: `${selectedTime.get("hour")}:${selectedTime.get(
+                "minute"
+              )}`,
               visitDate: selectedDate?.format("YYYY-MM-DD"),
               firstTime: true,
             }
           : {},
       opinion: formData?.patientOpinion?.value,
-    }
-    
+    };
+
     Swal.fire({
       title: "هل أنت متأكد؟",
       text: `من أنك تريد حجز موعد ل ${formData?.patientName?.value}`,
@@ -105,7 +107,7 @@ export default function Add() {
         */
         await getDoc(doc(db, "patients", "patientsCode"))
           .then((docu) => {
-            let dt = new Date()
+            let dt = new Date();
 
             addDoc(collection(db, "patients"), {
               ...patient,
@@ -120,40 +122,40 @@ export default function Add() {
                   title: `لقد تم تسجيل ${formData.patientName.value} بنجاح`,
                   showConfirmButton: false,
                   timer: 1500,
-                })
+                });
                 setDoc(doc(db, "patients", "patientsCode"), {
                   currentNumber: docu.data().currentNumber + 1,
                 })
                   .then(() => document.querySelector(".addNewPatient").reset())
                   .catch((e) => {
-                    console.log(e.message)
+                    console.log(e.message);
                     Swal.fire({
                       icon: "error",
                       title: "خطأ",
                       text: "حاول مرة أخرى!",
-                    })
-                  })
+                    });
+                  });
               })
               .catch((e) => {
-                console.log(e.message)
+                console.log(e.message);
                 Swal.fire({
                   icon: "error",
                   title: "خطأ",
                   text: "حاول مرة أخرى!",
-                })
-              })
+                });
+              });
           })
           .catch((e) => {
-            console.log(e.message)
+            console.log(e.message);
             Swal.fire({
               icon: "error",
               title: "خطأ",
               text: "حاول مرة أخرى!",
-            })
-          })
+            });
+          });
       }
-    })
-  }
+    });
+  };
 
   return (
     <>
@@ -413,5 +415,5 @@ export default function Add() {
         </div>
       </div>
     </>
-  )
+  );
 }
