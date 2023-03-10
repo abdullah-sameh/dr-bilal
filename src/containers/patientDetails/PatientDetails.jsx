@@ -1,25 +1,24 @@
-import Select from "react-select";
-import { DatePicker, MobileTimePicker } from "@mui/x-date-pickers";
-import dayjs from "dayjs";
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import Swal from "sweetalert2";
-import { auth, db } from "../../firebase";
-import { getPatientById } from "../../rtk/slices/patientSlice";
-import { setUser } from "../../rtk/slices/userSlice";
-import "./patientDetails.css";
+import Select from "react-select"
+import { DatePicker, MobileTimePicker } from "@mui/x-date-pickers"
+import dayjs from "dayjs"
+import { onAuthStateChanged } from "firebase/auth"
+import { doc, setDoc } from "firebase/firestore"
+import React, { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { useNavigate, useParams } from "react-router-dom"
+import Swal from "sweetalert2"
+import { auth, db } from "../../firebase"
+import { getPatientById } from "../../rtk/slices/patientSlice"
+import { setUser } from "../../rtk/slices/userSlice"
+import "./patientDetails.css"
 
 const PatientDetails = () => {
-  const { patientId } = useParams();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const { patientId } = useParams()
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const patient = useSelector((state) => state.patientById)
   const [patientInfo, setpatientInfo] = useState({})
-  const [reasonSelected, setReasonSelected] = useState()
   const weekDays = [
     "الأحد",
     "الإثنين",
@@ -46,26 +45,26 @@ const PatientDetails = () => {
     { value: "تبييض", label: "تبييض" },
     { value: "علاج", label: "علاج" },
     { value: "تقويم", label: "تقويم" },
-  ];
+  ]
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        dispatch(setUser(user));
+        dispatch(setUser(user))
       } else {
-        navigate("/");
+        navigate("/")
       }
-    });
-    dispatch(getPatientById(patientId));
+    })
+    dispatch(getPatientById(patientId))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [])
 
   useEffect(() => {
-    setpatientInfo(patient.data);
-  }, [patient]);
+    setpatientInfo(patient.data)
+  }, [patient])
 
   const editInfo = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     Swal.fire({
       title: "هل أنت متأكد؟",
       text: `من أنك تريد تعديل بيانات ${patientInfo?.name}؟`,
@@ -77,27 +76,27 @@ const PatientDetails = () => {
       if (result.isConfirmed) {
         await setDoc(doc(db, "patients", patientId), patientInfo)
           .then(() => {
-            dispatch(getPatientById(patientId));
+            dispatch(getPatientById(patientId))
             Swal.fire({
               position: "center",
               icon: "success",
               title: "تم التعديل بنجاح",
               showConfirmButton: false,
               timer: 1500,
-            });
-            navigate("../");
+            })
+            navigate("../")
           })
           .catch((e) => {
-            console.log(e.message);
+            console.log(e.message)
             Swal.fire({
               icon: "error",
               title: "خطأ",
               text: "حاول مرة أخرى!",
-            });
-          });
+            })
+          })
       }
-    });
-  };
+    })
+  }
   return (
     <div className="patient-info">
       <div className="container">
@@ -123,7 +122,7 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     name: e.currentTarget.value,
-                  });
+                  })
                 }}
                 required
               />
@@ -140,7 +139,7 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     phone: e.currentTarget.value,
-                  });
+                  })
                 }}
                 required
               />
@@ -157,7 +156,7 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     birthDate: e.currentTarget.value,
-                  });
+                  })
                 }}
               />
             </div>
@@ -173,7 +172,7 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     job: e.currentTarget.value,
-                  });
+                  })
                 }}
               />
             </div>
@@ -189,7 +188,7 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     adresse: e.currentTarget.value,
-                  });
+                  })
                 }}
               />
             </div>
@@ -351,7 +350,7 @@ const PatientDetails = () => {
                 setpatientInfo({
                   ...patientInfo,
                   otherSicks: e.currentTarget.value.toString().split("  "),
-                });
+                })
               }}
             />
           </div>
@@ -372,7 +371,7 @@ const PatientDetails = () => {
                   previousSurgeryOperations: e.currentTarget.value
                     .toString()
                     .split("  "),
-                });
+                })
               }}
             />
           </div>
@@ -391,7 +390,7 @@ const PatientDetails = () => {
                 setpatientInfo({
                   ...patientInfo,
                   allergy: e.currentTarget.value.toString().split("  "),
-                });
+                })
               }}
             />
           </div>
@@ -407,7 +406,7 @@ const PatientDetails = () => {
                 setpatientInfo({
                   ...patientInfo,
                   opinion: e.currentTarget.value,
-                });
+                })
               }}
             />
           </div>
@@ -453,8 +452,12 @@ const PatientDetails = () => {
                 <Select
                   labelId="illness"
                   id="demo-controlled-open-select"
-                  defaultInputValue={
-                    patientInfo?.nextVisit?.reason || "أشعة عادية"
+                  value={
+                    // console.log(patientInfo?.nextVisit?.reason)
+                    {
+                      value: patientInfo?.nextVisit?.reason,
+                      label: patientInfo?.nextVisit?.reason,
+                    } || "بتنجان مخلل"
                   }
                   onChange={(e) => {
                     setpatientInfo({
@@ -463,7 +466,7 @@ const PatientDetails = () => {
                         ...patientInfo?.nextVisit,
                         reason: e.value,
                       },
-                    });
+                    })
                   }}
                   options={services}
                 />
@@ -519,7 +522,7 @@ const PatientDetails = () => {
                       ...patientInfo,
                       nextVisit: {
                         ...patientInfo?.nextVisit,
-                        visitTime: time,
+                        visitTime: `${time.get("hour")}:${time.get("minute")}`,
                       },
                     })
                   }
@@ -529,22 +532,6 @@ const PatientDetails = () => {
                     },
                   }}
                 />
-                {/* <input
-                  className="form-control w-auto"
-                  type="time"
-                  id="visitTime"
-                  name="visitTime"
-                  value={patientInfo?.nextVisit?.visitTime || "00:00"}
-                  onChange={(e) => {
-                    setpatientInfo({
-                      ...patientInfo,
-                      nextVisit: {
-                        ...patientInfo?.nextVisit,
-                        visitTime: e.currentTarget.value,
-                      },
-                    })
-                  }}
-                /> */}
               </div>
               <div className="visit-date">
                 <label htmlFor="visitDate">تاريخ الزيارة</label>
@@ -557,7 +544,7 @@ const PatientDetails = () => {
                       ...patientInfo,
                       nextVisit: {
                         ...patientInfo?.nextVisit,
-                        visitDate: date,
+                        visitDate: date.format("YYYY-MM-DD"),
                       },
                     })
                   }
@@ -569,37 +556,22 @@ const PatientDetails = () => {
                       helperText:
                         "DD / MM / YYYY -- " +
                         weekDays[
-                          dayjs(patientInfo?.nextVisit?.visitDate).day()
+                          dayjs(patientInfo?.nextVisit?.visitDate)?.day()
                         ],
                     },
                   }}
+                  disablePast
                 />
-                {/* <input
-                  className="form-control w-auto"
-                  type="date"
-                  id="visitDate"
-                  name="visitDate"
-                  value={patientInfo?.nextVisit?.visitDate || ""}
-                  onChange={(e) => {
-                    setpatientInfo({
-                      ...patientInfo,
-                      nextVisit: {
-                        ...patientInfo?.nextVisit,
-                        visitDate: e.currentTarget.value,
-                      },
-                    })
-                  }}
-                /> */}
               </div>
             </div>
           </div>
           <button className="align-self-start" type="submit">
-            تعديل
+            تعديل {/* أكمل البيانات */}
           </button>
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PatientDetails;
+export default PatientDetails

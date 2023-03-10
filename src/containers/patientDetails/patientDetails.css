@@ -134,3 +134,18 @@
   position: absolute;
   background: #000;
 }
+
+.modal-content {
+  position: relative;
+  background-color: #fefefe;
+  margin: auto;
+  padding: 0;
+  border: 1px solid #888;
+  width: 80%; /* set the width to 80% */
+  max-width: 800px;
+  overflow-y: auto;
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+}
