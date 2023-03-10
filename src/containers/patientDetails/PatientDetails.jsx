@@ -1,34 +1,27 @@
-import { DatePicker, MobileTimePicker } from "@mui/x-date-pickers"
-import dayjs from "dayjs"
-import { onAuthStateChanged } from "firebase/auth"
-import { doc, setDoc } from "firebase/firestore"
-import React, { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { useNavigate, useParams } from "react-router-dom"
-import Select from "react-select"
-import Swal from "sweetalert2"
-import { auth, db } from "../../firebase"
-import { getPatientById } from "../../rtk/slices/patientSlice"
-import { setUser } from "../../rtk/slices/userSlice"
-import "./patientDetails.css"
+import { MenuItem } from "@mui/material";
+import Select from "react-select";
+import { DatePicker, MobileTimePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
+import { auth, db } from "../../firebase";
+import { getPatientById } from "../../rtk/slices/patientSlice";
+import { setUser } from "../../rtk/slices/userSlice";
+import "./patientDetails.css";
 
 const PatientDetails = () => {
-  const { patientId } = useParams()
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const { patientId } = useParams();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const patient = useSelector((state) => state.patientById)
   const [patientInfo, setpatientInfo] = useState({})
   const [reasonSelected, setReasonSelected] = useState()
-  const weekDays = [
-    "الأحد",
-    "الإثنين",
-    "الثلاثاء",
-    "الأربعاء",
-    "الخميس",
-    "الجمعة",
-    "السبت",
-  ]
+
   const services = [
     { value: "كشف", label: "كشف" },
     { value: "أشعة عادية", label: "أشعة عادية" },
@@ -46,26 +39,26 @@ const PatientDetails = () => {
     { value: "تبييض", label: "تبييض" },
     { value: "علاج", label: "علاج" },
     { value: "تقويم", label: "تقويم" },
-  ]
+  ];
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        dispatch(setUser(user))
+        dispatch(setUser(user));
       } else {
-        navigate("/")
+        navigate("/");
       }
-    })
-    dispatch(getPatientById(patientId))
+    });
+    dispatch(getPatientById(patientId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   useEffect(() => {
-    setpatientInfo(patient.data)
-  }, [patient])
+    setpatientInfo(patient.data);
+  }, [patient]);
 
   const editInfo = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     Swal.fire({
       title: "هل أنت متأكد؟",
       text: `من أنك تريد تعديل بيانات ${patientInfo?.name}؟`,
@@ -77,28 +70,27 @@ const PatientDetails = () => {
       if (result.isConfirmed) {
         await setDoc(doc(db, "patients", patientId), patientInfo)
           .then(() => {
-            dispatch(getPatientById(patientId))
+            dispatch(getPatientById(patientId));
             Swal.fire({
               position: "center",
               icon: "success",
               title: "تم التعديل بنجاح",
               showConfirmButton: false,
               timer: 1500,
-            })
-            navigate("../")
+            });
+            navigate("../");
           })
           .catch((e) => {
-            console.log(e.message)
+            console.log(e.message);
             Swal.fire({
               icon: "error",
               title: "خطأ",
               text: "حاول مرة أخرى!",
-            })
-          })
+            });
+          });
       }
-    })
-  }
-
+    });
+  };
   return (
     <div className="patient-info">
       <div className="container">
@@ -124,7 +116,7 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     name: e.currentTarget.value,
-                  })
+                  });
                 }}
                 required
               />
@@ -141,7 +133,7 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     phone: e.currentTarget.value,
-                  })
+                  });
                 }}
                 required
               />
@@ -158,7 +150,7 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     birthDate: e.currentTarget.value,
-                  })
+                  });
                 }}
               />
             </div>
@@ -174,7 +166,7 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     job: e.currentTarget.value,
-                  })
+                  });
                 }}
               />
             </div>
@@ -190,70 +182,69 @@ const PatientDetails = () => {
                   setpatientInfo({
                     ...patientInfo,
                     adresse: e.currentTarget.value,
-                  })
+                  });
                 }}
               />
             </div>
           </div>
-          <div className="d-flex justify-content-center flex-wrap gap-3">
-            <div className="marital-status flex-grow-1">
-              <h4 className="title">الحالة الاجتماعية</h4>
-              <div className="status-container">
-                <label htmlFor="unmarried">أعزب</label>
-                <input
-                  type="radio"
-                  name="socialStatus"
-                  id="unmarried"
-                  value={"unmarried"}
-                  checked={
-                    document.querySelector("#unmarried")?.value ===
-                      patientInfo?.maritalStatus || false
-                  }
-                  onChange={(e) => {
-                    e.currentTarget.checked &&
-                      setpatientInfo({
-                        ...patientInfo,
-                        maritalStatus: e.currentTarget.value,
-                      })
-                  }}
-                />
-
-                <label htmlFor="married">متزوج</label>
-                <input
-                  type="radio"
-                  name="socialStatus"
-                  id="married"
-                  value={"married"}
-                  checked={
-                    document.querySelector("#married")?.value ===
-                      patientInfo?.maritalStatus || false
-                  }
-                  onChange={(e) => {
-                    e.currentTarget.checked &&
-                      setpatientInfo({
-                        ...patientInfo,
-                        maritalStatus: e.currentTarget.value,
-                      })
-                  }}
-                />
-              </div>
-            </div>
-            <div className="pregnant-status flex-grow-1">
-              <h4 className="title">هل أنت؟</h4>
-              <div className="status-container">
-                <label htmlFor="pregnant">حامل</label>
-                <input
-                  type="checkbox"
-                  name="pregnant"
-                  id="pregnant"
-                  checked={patientInfo?.pregnant || false}
-                  onChange={(e) =>
+          <div className="marital-status">
+            <h4 className="title">الحالة الاجتماعية</h4>
+            <div className="status-container">
+              <label htmlFor="unmarried">أعزب</label>
+              <input
+                type="radio"
+                name="socialStatus"
+                id="unmarried"
+                value={"unmarried"}
+                checked={
+                  document.querySelector("#unmarried")?.value ===
+                    patientInfo?.maritalStatus || false
+                }
+                onChange={(e) => {
+                  e.currentTarget.checked &&
                     setpatientInfo({
                       ...patientInfo,
-                      pregnant: e.currentTarget.checked,
+                      maritalStatus: e.currentTarget.value,
                     })
-                  }
-                />
+                }}
+              />
+
+              <label htmlFor="married">متزوج</label>
+              <input
+                type="radio"
+                name="socialStatus"
+                id="married"
+                value={"married"}
+                checked={
+                  document.querySelector("#married")?.value ===
+                    patientInfo?.maritalStatus || false
+                }
+                onChange={(e) => {
+                  e.currentTarget.checked &&
+                    setpatientInfo({
+                      ...patientInfo,
+                      maritalStatus: e.currentTarget.value,
+                    })
+                }}
+              />
+            </div>
+          </div>
+          <div className="pregnant-status">
+            <h4 className="title">هل أنت؟</h4>
+            <div className="status-container">
+              <label htmlFor="pregnant">حامل</label>
+              <input
+                type="checkbox"
+                name="pregnant"
+                id="pregnant"
+                checked={patientInfo?.pregnant || false}
+                onChange={(e) =>
+                  setpatientInfo({
+                    ...patientInfo,
+                    pregnant: e.currentTarget.checked,
+                  })
+                }
+              />
 
                 <label htmlFor="breastfeeding">مرضعة</label>
                 <input
@@ -352,7 +343,7 @@ const PatientDetails = () => {
                 setpatientInfo({
                   ...patientInfo,
                   otherSicks: e.currentTarget.value.toString().split("  "),
-                })
+                });
               }}
             />
           </div>
@@ -373,7 +364,7 @@ const PatientDetails = () => {
                   previousSurgeryOperations: e.currentTarget.value
                     .toString()
                     .split("  "),
-                })
+                });
               }}
             />
           </div>
@@ -392,7 +383,7 @@ const PatientDetails = () => {
                 setpatientInfo({
                   ...patientInfo,
                   allergy: e.currentTarget.value.toString().split("  "),
-                })
+                });
               }}
             />
           </div>
@@ -408,7 +399,7 @@ const PatientDetails = () => {
                 setpatientInfo({
                   ...patientInfo,
                   opinion: e.currentTarget.value,
-                })
+                });
               }}
             />
           </div>
@@ -450,20 +441,23 @@ const PatientDetails = () => {
             <div className="content gap-3">
               <div className="reason">
                 <label htmlFor="illness">سبب الزيارة</label>
+
                 <Select
-                  labelId="illness"
-                  id="demo-controlled-open-select"
-                  defaultInputValue={
-                    patientInfo?.nextVisit?.reason || "أشعة عادية"
-                  }
-                  onChange={(e) => {
+                  name="illness"
+                  id="illness"
+                  value={{
+                    value: patientInfo?.data?.nextVisit?.reason || "كشف",
+                    label: patientInfo?.data?.nextVisit?.reason || "كشف",
+                  }}
+                  onChange={(reason) => {
+                    console.log(reason)
                     setpatientInfo({
                       ...patientInfo,
                       nextVisit: {
                         ...patientInfo?.nextVisit,
                         reason: e.value,
                       },
-                    })
+                    });
                   }}
                   options={services}
                 />
@@ -509,13 +503,9 @@ const PatientDetails = () => {
                   id="visitTime"
                   name="visitTime"
                   views={["hours", "minutes"]}
-                  value={
-                    dayjs(new Date())
-                      .hour(+patient?.data?.nextVisit?.visitTime?.split(":")[0])
-                      .minute(
-                        +patient?.data?.nextVisit?.visitTime?.split(":")[1]
-                      ) || ""
-                  }
+                  value={dayjs(new Date())
+                    .hour(+patient?.data?.nextVisit?.visitTime.split(":")[0])
+                    .minute(+patient?.data?.nextVisit?.visitTime.split(":")[1])}
                   onChange={(time) =>
                     setpatientInfo({
                       ...patientInfo,
@@ -553,7 +543,10 @@ const PatientDetails = () => {
                 <DatePicker
                   id="visitDate"
                   name="visitDate"
-                  value={dayjs(patientInfo?.nextVisit?.visitDate)}
+                  value={dayjs(new Date())
+                    .date(+patientInfo?.nextVisit?.visitDate.split("-")[2])
+                    .month(+patientInfo?.nextVisit?.visitDate.split("-")[1] - 1)
+                    .year(+patientInfo?.nextVisit?.visitDate.split("-")[0])}
                   onChange={(date) =>
                     setpatientInfo({
                       ...patientInfo,
@@ -601,7 +594,7 @@ const PatientDetails = () => {
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PatientDetails
+export default PatientDetails;
