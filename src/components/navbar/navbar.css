@@ -63,3 +63,9 @@ nav a:hover:not(.navbar-brand) {
   background: var(--white) !important;
   color: #000 !important;
 }
+
+
+nav a.current-page {
+  background: var(--white) !important;
+  color: #000 !important;
+}

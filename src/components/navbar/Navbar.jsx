@@ -1,55 +1,60 @@
-import "./navbar.css";
-import { Link, useNavigate } from "react-router-dom";
-import { signOut } from "firebase/auth";
-import { auth } from "../../firebase";
-import { HiMenuAlt4 } from "react-icons/hi";
-import logo from "../../assets/logo.png";
-import Swal from "sweetalert2";
+import "./navbar.css"
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import { signOut } from "firebase/auth"
+import { auth } from "../../firebase"
+import { HiMenuAlt4 } from "react-icons/hi"
+import logo from "../../assets/logo.png"
+import Swal from "sweetalert2"
+import { useEffect, useReducer } from "react"
 
-// const initialState = {
-//   home: "",
-//   add: "",
-//   data: "",
-// };
+const initialState = {
+  home: "",
+  add: "",
+  data: "",
+}
 
-// function reducer(state, action) {
-//   switch (action.type) {
-//     case "home":
-//       return { home: "hover" };
-//     case "add":
-//       return { add: "hover" };
-//     case "data":
-//       return { data: "hover" };
-//     default:
-//       return state;
-//   }
-// }
+function reducer(state, action) {
+  switch (action.type) {
+    case "home":
+      return { home: "current-page" }
+    case "add":
+      return { add: "current-page" }
+    case "data":
+      return { data: "current-page" }
+    case "reservations":
+      return { reservations: "current-page" }
+    default:
+      return state
+  }
+}
 
 export default function Navbar() {
-  // const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, initialState)
 
-  // const location = useLocation();
-  const navigate = useNavigate();
+  const location = useLocation()
+  const navigate = useNavigate()
 
   const signout = () => {
     signOut(auth)
       .then(() => {
-        navigate("/");
+        navigate("/")
       })
       .catch(() => {
         Swal.fire({
           icon: "error",
           title: "خطأ",
           text: "حاول مرة أخرى",
-        });
-      });
-  };
+        })
+      })
+  }
 
-  // useEffect(() => {
-  //   if (location.pathname === "/home") dispatch({ type: "home" });
-  //   else if (location.pathname === "/add") dispatch({ type: "add" });
-  //   else dispatch({ type: "data" });
-  // }, [location]);
+  useEffect(() => {
+    if (location.pathname === "/home") dispatch({ type: "home" })
+    else if (location.pathname === "/add") dispatch({ type: "add" })
+    else if (location.pathname === "/data") dispatch({ type: "data" })
+    else if (location.pathname === "/reservations")
+      dispatch({ type: "reservations" })
+  }, [location])
 
   return (
     <>
@@ -73,22 +78,29 @@ export default function Navbar() {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav">
               <li className="nav-item">
-                <Link to="/home" aria-current="page" className={`nav-link`}>
+                <Link
+                  to="/home"
+                  aria-current="page"
+                  className={`nav-link ` + state.home}
+                >
                   الصفحة الرئيسية
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/add" className={` nav-link`}>
+                <Link to="/add" className={`nav-link ` + state.add}>
                   أضف عميل
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/data" className={` nav-link`}>
+                <Link to="/data" className={`nav-link ` + state.data}>
                   العملاء
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/reservations" className={` nav-link`}>
+                <Link
+                  to="/reservations"
+                  className={`nav-link ` + state.reservations}
+                >
                   الحجوزات
                 </Link>
               </li>
@@ -122,5 +134,5 @@ export default function Navbar() {
         </div>
       </nav> */}
     </>
-  );
+  )
 }

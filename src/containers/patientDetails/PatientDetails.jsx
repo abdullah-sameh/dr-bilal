@@ -20,7 +20,15 @@ const PatientDetails = () => {
   const patient = useSelector((state) => state.patientById)
   const [patientInfo, setpatientInfo] = useState({})
   const [reasonSelected, setReasonSelected] = useState()
-
+  const weekDays = [
+    "الأحد",
+    "الإثنين",
+    "الثلاثاء",
+    "الأربعاء",
+    "الخميس",
+    "الجمعة",
+    "السبت",
+  ]
   const services = [
     { value: "كشف", label: "كشف" },
     { value: "أشعة عادية", label: "أشعة عادية" },
@@ -94,14 +102,17 @@ const PatientDetails = () => {
   return (
     <div className="patient-info">
       <div className="container">
-        <form onSubmit={editInfo} className="editPatientInfo">
+        <form
+          onSubmit={editInfo}
+          className="editPatientInfo d-flex flex-column gap-4"
+        >
           <h4 onClick={() => navigate("../")} className="close">
             X
           </h4>
           <h2 className="patientCode">{patientInfo?.code}</h2>
-          <div className="main-info">
+          <div className="main-info gap-3">
             <div className="name">
-              <label htmlFor="patientName">اسم المريض</label>
+              <label htmlFor="patientName">اسم العميل</label>
               <input
                 type="text"
                 disabled
@@ -119,7 +130,7 @@ const PatientDetails = () => {
               />
             </div>
             <div className="phone">
-              <label htmlFor="patientPhone">رقم الموبايل</label>
+              <label htmlFor="patientPhone">رقم الهاتف</label>
               <input
                 type="text"
                 name="patientPhone"
@@ -184,143 +195,145 @@ const PatientDetails = () => {
               />
             </div>
           </div>
-          <div className="marital-status">
-            <h4 className="title">الحالة الاجتماعية</h4>
-            <div className="status-container">
-              <label htmlFor="unmarried">أعزب</label>
-              <input
-                type="radio"
-                name="socialStatus"
-                id="unmarried"
-                value={"unmarried"}
-                checked={
-                  document.querySelector("#unmarried")?.value ===
-                    patientInfo?.maritalStatus || false
-                }
-                onChange={(e) => {
-                  e.currentTarget.checked &&
-                    setpatientInfo({
-                      ...patientInfo,
-                      maritalStatus: e.currentTarget.value,
-                    })
-                }}
-              />
-
-              <label htmlFor="married">متزوج</label>
-              <input
-                type="radio"
-                name="socialStatus"
-                id="married"
-                value={"married"}
-                checked={
-                  document.querySelector("#married")?.value ===
-                    patientInfo?.maritalStatus || false
-                }
-                onChange={(e) => {
-                  e.currentTarget.checked &&
-                    setpatientInfo({
-                      ...patientInfo,
-                      maritalStatus: e.currentTarget.value,
-                    })
-                }}
-              />
-            </div>
-          </div>
-          <div className="pregnant-status">
-            <h4 className="title">هل أنت؟</h4>
-            <div className="status-container">
-              <label htmlFor="pregnant">حامل</label>
-              <input
-                type="checkbox"
-                name="pregnant"
-                id="pregnant"
-                checked={patientInfo?.pregnant || false}
-                onChange={(e) =>
-                  setpatientInfo({
-                    ...patientInfo,
-                    pregnant: e.currentTarget.checked,
-                  })
-                }
-              />
-
-              <label htmlFor="breastfeeding">مرضعة</label>
-              <input
-                type="checkbox"
-                name="breastfeeding"
-                id="breastfeeding"
-                checked={patientInfo?.breastfeeding || false}
-                onChange={(e) =>
-                  setpatientInfo({
-                    ...patientInfo,
-                    breastfeeding: e.currentTarget.checked,
-                  })
-                }
-              />
-            </div>
-          </div>
-          <div className="sick-history">
-            <div className="title">
-              <h4>هل لديك أمراض مثل؟</h4>
-            </div>
-            <div className="popular-sicks">
-              <div className="sick-container">
-                <label htmlFor="diabetes">سكر</label>
+          <div className="d-flex justify-content-center flex-wrap gap-3">
+            <div className="marital-status flex-grow-1">
+              <h4 className="title">الحالة الاجتماعية</h4>
+              <div className="status-container">
+                <label htmlFor="unmarried">أعزب</label>
                 <input
-                  type="checkbox"
-                  name="diabetes"
-                  id="diabetes"
-                  value={"سكر"}
-                  checked={patientInfo?.popularSicks?.diabetes || false}
-                  onChange={(e) =>
-                    setpatientInfo({
-                      ...patientInfo,
-                      popularSicks: {
-                        ...patientInfo.popularSicks,
-                        diabetes: e.currentTarget.checked,
-                      },
-                    })
-                  }
-                />
-              </div>
-              <div className="sick-container">
-                <label htmlFor="highBloodPressure">ضغط</label>
-                <input
-                  type="checkbox"
-                  name="highBloodPressure"
-                  value="ضغط"
-                  id="highBloodPressure"
+                  type="radio"
+                  name="socialStatus"
+                  id="unmarried"
+                  value={"unmarried"}
                   checked={
-                    patientInfo?.popularSicks?.highBloodPressure || false
+                    document.querySelector("#unmarried")?.value ===
+                      patientInfo?.maritalStatus || false
                   }
+                  onChange={(e) => {
+                    e.currentTarget.checked &&
+                      setpatientInfo({
+                        ...patientInfo,
+                        maritalStatus: e.currentTarget.value,
+                      })
+                  }}
+                />
+
+                <label htmlFor="married">متزوج</label>
+                <input
+                  type="radio"
+                  name="socialStatus"
+                  id="married"
+                  value={"married"}
+                  checked={
+                    document.querySelector("#married")?.value ===
+                      patientInfo?.maritalStatus || false
+                  }
+                  onChange={(e) => {
+                    e.currentTarget.checked &&
+                      setpatientInfo({
+                        ...patientInfo,
+                        maritalStatus: e.currentTarget.value,
+                      })
+                  }}
+                />
+              </div>
+            </div>
+            <div className="pregnant-status flex-grow-1">
+              <h4 className="title">هل أنت؟</h4>
+              <div className="status-container">
+                <label htmlFor="pregnant">حامل</label>
+                <input
+                  type="checkbox"
+                  name="pregnant"
+                  id="pregnant"
+                  checked={patientInfo?.pregnant || false}
                   onChange={(e) =>
                     setpatientInfo({
                       ...patientInfo,
-                      popularSicks: {
-                        ...patientInfo.popularSicks,
-                        highBloodPressure: e.currentTarget.checked,
-                      },
+                      pregnant: e.currentTarget.checked,
+                    })
+                  }
+                />
+
+                <label htmlFor="breastfeeding">مرضعة</label>
+                <input
+                  type="checkbox"
+                  name="breastfeeding"
+                  id="breastfeeding"
+                  checked={patientInfo?.breastfeeding || false}
+                  onChange={(e) =>
+                    setpatientInfo({
+                      ...patientInfo,
+                      breastfeeding: e.currentTarget.checked,
                     })
                   }
                 />
               </div>
-              <div className="sick-container">
-                <label htmlFor="smoker">مدخن</label>
-                <input
-                  type="checkbox"
-                  name="smoker"
-                  id="smoker"
-                  value="تدخين"
-                  checked={patientInfo?.popularSicks?.smoker || false}
-                  onChange={(e) =>
-                    setpatientInfo({
-                      ...patientInfo,
-                      popularSicks: {
-                        ...patientInfo.popularSicks,
-                        smoker: e.currentTarget.checked,
-                      },
-                    })
-                  }
-                />
+            </div>
+            <div className="sick-history flex-grow-1">
+              <div className="title">
+                <h4>هل لديك أمراض مثل؟</h4>
+              </div>
+              <div className="popular-sicks">
+                <div className="sick-container">
+                  <label htmlFor="diabetes">سكر</label>
+                  <input
+                    type="checkbox"
+                    name="diabetes"
+                    id="diabetes"
+                    value={"سكر"}
+                    checked={patientInfo?.popularSicks?.diabetes || false}
+                    onChange={(e) =>
+                      setpatientInfo({
+                        ...patientInfo,
+                        popularSicks: {
+                          ...patientInfo.popularSicks,
+                          diabetes: e.currentTarget.checked,
+                        },
+                      })
+                    }
+                  />
+                </div>
+                <div className="sick-container">
+                  <label htmlFor="highBloodPressure">ضغط</label>
+                  <input
+                    type="checkbox"
+                    name="highBloodPressure"
+                    value="ضغط"
+                    id="highBloodPressure"
+                    checked={
+                      patientInfo?.popularSicks?.highBloodPressure || false
+                    }
+                    onChange={(e) =>
+                      setpatientInfo({
+                        ...patientInfo,
+                        popularSicks: {
+                          ...patientInfo.popularSicks,
+                          highBloodPressure: e.currentTarget.checked,
+                        },
+                      })
+                    }
+                  />
+                </div>
+                <div className="sick-container">
+                  <label htmlFor="smoker">مدخن</label>
+                  <input
+                    type="checkbox"
+                    name="smoker"
+                    id="smoker"
+                    value="تدخين"
+                    checked={patientInfo?.popularSicks?.smoker || false}
+                    onChange={(e) =>
+                      setpatientInfo({
+                        ...patientInfo,
+                        popularSicks: {
+                          ...patientInfo.popularSicks,
+                          smoker: e.currentTarget.checked,
+                        },
+                      })
+                    }
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -399,7 +412,7 @@ const PatientDetails = () => {
               }}
             />
           </div>
-          <div className="previous-visits my-5">
+          <div className="previous-visits">
             <h4 className="title">الزيارات السابقة:-</h4>
             {patientInfo?.previousVisits?.length ? (
               <table className="previous-visits table table-striped w-lg-100 w-md-auto">
@@ -414,8 +427,16 @@ const PatientDetails = () => {
                   {patientInfo?.previousVisits?.map((visit, index) => (
                     <tr key={index}>
                       <td>{visit?.reason}</td>
-                      <td>{visit?.visitDate}</td>
-                      <td>{visit?.visitTime}</td>
+                      <td>
+                        {visit?.visitDate} --- (
+                        {weekDays[dayjs(visit?.visitDate).day()]})
+                      </td>
+                      <td style={{ direction: "ltr", textAlign: "end" }}>
+                        {dayjs()
+                          .hour(visit?.visitTime.split(":")[0])
+                          .minute(visit?.visitTime.split(":")[1])
+                          .format("hh:mm A")}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -426,23 +447,21 @@ const PatientDetails = () => {
           </div>
           <div className="next-visits">
             <h4 className="title">الزيارة القادمة:-</h4>
-            <div className="content">
+            <div className="content gap-3">
               <div className="reason">
                 <label htmlFor="illness">سبب الزيارة</label>
                 <Select
-                  name="illness"
-                  id="illness"
-                  value={{
-                    value: patientInfo?.data?.nextVisit?.reason || "كشف",
-                    label: patientInfo?.data?.nextVisit?.reason || "كشف",
-                  }}
-                  onChange={(reason) => {
-                    console.log(reason)
+                  labelId="illness"
+                  id="demo-controlled-open-select"
+                  defaultInputValue={
+                    patientInfo?.nextVisit?.reason || "أشعة عادية"
+                  }
+                  onChange={(e) => {
                     setpatientInfo({
                       ...patientInfo,
                       nextVisit: {
                         ...patientInfo?.nextVisit,
-                        reason: reason,
+                        reason: e.value,
                       },
                     })
                   }}
@@ -490,9 +509,13 @@ const PatientDetails = () => {
                   id="visitTime"
                   name="visitTime"
                   views={["hours", "minutes"]}
-                  value={dayjs(new Date())
-                    .hour(+patient?.data?.nextVisit?.visitTime.split(":")[0])
-                    .minute(+patient?.data?.nextVisit?.visitTime.split(":")[1])}
+                  value={
+                    dayjs(new Date())
+                      .hour(+patient?.data?.nextVisit?.visitTime?.split(":")[0])
+                      .minute(
+                        +patient?.data?.nextVisit?.visitTime?.split(":")[1]
+                      ) || ""
+                  }
                   onChange={(time) =>
                     setpatientInfo({
                       ...patientInfo,
@@ -530,10 +553,7 @@ const PatientDetails = () => {
                 <DatePicker
                   id="visitDate"
                   name="visitDate"
-                  value={dayjs(new Date())
-                    .date(+patientInfo?.nextVisit?.visitDate.split("-")[2])
-                    .month(+patientInfo?.nextVisit?.visitDate.split("-")[1] - 1)
-                    .year(+patientInfo?.nextVisit?.visitDate.split("-")[0])}
+                  value={dayjs(patientInfo?.nextVisit?.visitDate)}
                   onChange={(date) =>
                     setpatientInfo({
                       ...patientInfo,
@@ -548,7 +568,11 @@ const PatientDetails = () => {
                   format="DD/MM/YYYY"
                   slotProps={{
                     textField: {
-                      helperText: "DD / MM / YYYY",
+                      helperText:
+                        "DD / MM / YYYY -- " +
+                        weekDays[
+                          dayjs(patientInfo?.nextVisit?.visitDate).day()
+                        ],
                     },
                   }}
                 />
@@ -571,7 +595,9 @@ const PatientDetails = () => {
               </div>
             </div>
           </div>
-          <button type="submit">تعديل</button>
+          <button className="align-self-start" type="submit">
+            تعديل
+          </button>
         </form>
       </div>
     </div>

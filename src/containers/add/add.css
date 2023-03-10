@@ -72,27 +72,20 @@
 .add .addNewPatient {
   display: grid;
   justify-items: center;
+  gap: 1rem;
 }
 .add .addNewPatient .main-info,
 .add .addNewPatient .next-visits .content {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  gap: 1rem;
+}
+.add .addNewPatient .main-info > div {
+  min-width: 250px;
 }
 .next-visits .content label + div#illness {
   width: 200px;
-}
-
-@media (max-width: 768px) {
-  .add .addNewPatient .main-info {
-    display: block;
-  }
-}
-
-.add .addNewPatient > div,
-.add .addNewPatient .main-info > div,
-.add .addNewPatient .next-visits .content > div {
-  margin: 20px 0 20px 20px;
 }
 
 .add .addNewPatient > div label {
@@ -105,12 +98,6 @@
 .add .addNewPatient .sick-history .popular-sicks {
   display: flex;
   align-items: center;
-}
-
-.add .addNewPatient .marital-status .status-container input,
-.add .addNewPatient .pregnant-status .status-container input,
-.add .addNewPatient .sick-history .popular-sicks input {
-  margin: 0 5px 5px 10px;
 }
 
 .add .addNewPatient button {
@@ -139,27 +126,14 @@
   -o-transform: scale(1.1);
 }
 
-
 .none {
   display: none;
 }
-/* for customize date and time picker */
-:is(.visit-date, .visit-time) > div {
-  background: #fff;
-  direction: ltr;
-  display: flex;
+
+#whats {
+  display: none;
 }
-:is(.visit-date, .visit-time) > div > div + p {
-  background: var(--white);
-  margin: 0;
-  padding: 5px ;
-}
-:is(.visit-date, .visit-time) > div input {
-  padding: 8px 5px !important;
-}
-:is(.visit-date, .visit-time) > div button {
-  padding: 5px !important;
-}
-.css-trxt40-MuiTimePickerToolbar-hourMinuteLabel {
-  flex-direction: row-reverse;
+.whatsapp-check svg {
+  cursor: pointer;
+  transition: 0.2s;
 }
