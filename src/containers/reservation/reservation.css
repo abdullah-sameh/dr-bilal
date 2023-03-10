@@ -1,4 +1,5 @@
 /* to hide clock input */
+
 td > div > input[type="time"]::-webkit-calendar-picker-indicator {
   display: none;
 }

@@ -111,23 +111,23 @@ export default function Data() {
                   <td>{patient?.data?.code}</td>
                   <td>{patient?.data?.name}</td>
                   <td>
-                    {patient?.data?.previousVisits.length === 0
+                    {patient?.data?.previousVisits?.length === 0
                       ? "----"
                       : patient?.data?.previousVisits[
-                          patient?.data?.previousVisits.length - 1
+                          patient?.data?.previousVisits?.length - 1
                         ].reason}
                   </td>
                   <td>
-                    {patient?.data?.previousVisits.length === 0
+                    {patient?.data?.previousVisits?.length === 0
                       ? "----"
                       : patient?.data?.previousVisits[
-                          patient?.data?.previousVisits.length - 1
+                          patient?.data?.previousVisits?.length - 1
                         ].visitDate}
                   </td>
                   <td>
                     <Link
                       className="btn btn-primary mx-1"
-                      to={`./${patient?.id}`}
+                      to={`/${patient?.id}`}
                     >
                       تفاصيل
                     </Link>
@@ -143,10 +143,10 @@ export default function Data() {
             </tbody>
           </table>
         </div>
-        <Routes>
-          <Route path="/:patientId" element={<PatientDetails />} />
-        </Routes>
       </div>
+      <Routes>
+        <Route path="/:patientId" element={<PatientDetails />} />
+      </Routes>
     </>
   );
 }

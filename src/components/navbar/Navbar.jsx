@@ -1,60 +1,71 @@
-import "./navbar.css"
-import { Link, useLocation, useNavigate } from "react-router-dom"
-import { signOut } from "firebase/auth"
-import { auth } from "../../firebase"
-import { HiMenuAlt4 } from "react-icons/hi"
-import logo from "../../assets/logo.png"
-import Swal from "sweetalert2"
-import { useEffect, useReducer } from "react"
+import "./navbar.css";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebase";
+import { HiMenuAlt4 } from "react-icons/hi";
+import logo from "../../assets/logo.png";
+import Swal from "sweetalert2";
+import { useEffect, useReducer } from "react";
 
 const initialState = {
   home: "",
   add: "",
   data: "",
-}
+};
 
 function reducer(state, action) {
   switch (action.type) {
     case "home":
-      return { home: "current-page" }
+      return { home: "current-page" };
     case "add":
-      return { add: "current-page" }
+      return { add: "current-page" };
     case "data":
-      return { data: "current-page" }
+      return { data: "current-page" };
     case "reservations":
-      return { reservations: "current-page" }
+      return { reservations: "current-page" };
     default:
-      return state
+      return state;
   }
 }
 
 export default function Navbar() {
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const [state, dispatch] = useReducer(reducer, initialState);
 
-  const location = useLocation()
-  const navigate = useNavigate()
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const signout = () => {
-    signOut(auth)
-      .then(() => {
-        navigate("/")
-      })
-      .catch(() => {
-        Swal.fire({
-          icon: "error",
-          title: "خطأ",
-          text: "حاول مرة أخرى",
-        })
-      })
-  }
+    Swal.fire({
+      title: "هل أنت متأكد؟",
+      text: `من أنك تريد تسجيل الخروج`,
+      showDenyButton: true,
+      confirmButtonText: "تأكيد",
+      denyButtonText: `إالغاء`,
+    }).then(async (result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        signOut(auth)
+          .then(() => {
+            navigate("/");
+          })
+          .catch(() => {
+            Swal.fire({
+              icon: "error",
+              title: "خطأ",
+              text: "حاول مرة أخرى",
+            });
+          });
+      }
+    });
+  };
 
   useEffect(() => {
-    if (location.pathname === "/home") dispatch({ type: "home" })
-    else if (location.pathname === "/add") dispatch({ type: "add" })
-    else if (location.pathname === "/data") dispatch({ type: "data" })
+    if (location.pathname === "/home") dispatch({ type: "home" });
+    else if (location.pathname === "/add") dispatch({ type: "add" });
+    else if (location.pathname === "/data") dispatch({ type: "data" });
     else if (location.pathname === "/reservations")
-      dispatch({ type: "reservations" })
-  }, [location])
+      dispatch({ type: "reservations" });
+  }, [location]);
 
   return (
     <>
@@ -134,5 +145,5 @@ export default function Navbar() {
         </div>
       </nav> */}
     </>
-  )
+  );
 }

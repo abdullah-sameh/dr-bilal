@@ -118,7 +118,7 @@
   color: var(--white);
   width: max-content;
   font-family: var(--font);
-  font-size: 25px;
+  font-size: 20px;
   padding: 10px;
   transition: var(--transition-time);
   cursor: pointer;

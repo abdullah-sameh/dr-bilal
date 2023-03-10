@@ -1,11 +1,6 @@
 .patient-info {
-  background-color: rgba(0, 0, 0, 0.575);
-  z-index: 5;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
   padding: 50px;
+  /* max-height: auto; */
 }
 
 @media (max-width: 556px) {
@@ -18,33 +13,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.patient-info .editPatientInfo {
-  background-color: white;
-  border-radius: 15px;
-  -webkit-border-radius: 15px;
-  -moz-border-radius: 15px;
-  -ms-border-radius: 15px;
-  -o-border-radius: 15px;
-  padding: 20px;
-  position: relative;
-  z-index: 51;
-}
-
-.patient-info .editPatientInfo .close {
-  position: absolute;
-  left: 15px;
-  top: 15px;
-  background-color: var(--blue);
-  color: var(--white);
-  padding: 8px 10px 0;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  -ms-border-radius: 5px;
-  -o-border-radius: 5px;
-  cursor: pointer;
 }
 
 .patient-info .editPatientInfo .main-info,
@@ -145,4 +113,64 @@
   -webkit-animation-duration: 0.4s;
   animation-name: animatetop;
   animation-duration: 0.4s;
+}
+
+/* print paper */
+.printed-paper {
+  background-color: white;
+}
+
+.printed-paper .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 2px solid black;
+  margin-bottom: 15px;
+}
+
+.printed-paper .header .logo {
+  display: flex;
+  align-items: center;
+}
+
+.printed-paper .header .logo img {
+  width: 90px;
+  margin-left: 10px;
+}
+
+.printed-paper .header .logo h1 {
+  font-weight: bold;
+}
+
+.printed-paper .main-data h5 {
+  margin: 20px 0;
+  line-height: 1.6;
+}
+
+.printed-paper .main-data .mouth {
+  width: 100%;
+}
+
+.printed-paper .main-data .mouth img {
+  max-height: 350px;
+}
+
+.printed-paper table {
+  margin-top: 50px;
+}
+
+.printed-paper table td,
+.printed-paper table th {
+  height: 20px;
+  text-align: center;
+}
+
+@media print {
+  .patient-info {
+    display: none;
+  }
+  .printed-paper {
+    display: block !important;
+  }
 }
