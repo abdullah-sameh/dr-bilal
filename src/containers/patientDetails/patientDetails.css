@@ -47,13 +47,10 @@
   cursor: pointer;
 }
 
-.patient-info .editPatientInfo .main-info {
+.patient-info .editPatientInfo .main-info,
+.patient-info .editPatientInfo .next-visits .content {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-}
-.patient-info .editPatientInfo .next-visits .content {
-  display: flex;
-  flex-wrap: wrap;
 }
 
 /* .patient-info .editPatientInfo > div,

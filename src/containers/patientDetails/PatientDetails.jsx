@@ -18,6 +18,8 @@ const PatientDetails = () => {
   const navigate = useNavigate()
 
   const patient = useSelector((state) => state.patientById)
+  const [timeVisit, setTimeVisit] = useState(dayjs("none"))
+  const [birthDate, setBirthDate] = useState(dayjs("none"))
   const [patientInfo, setpatientInfo] = useState({})
   const weekDays = [
     "الأحد",
@@ -61,6 +63,12 @@ const PatientDetails = () => {
 
   useEffect(() => {
     setpatientInfo(patient.data)
+    setTimeVisit(
+      dayjs()
+        .hour(+patient?.data?.nextVisit?.visitTime?.split(":")[0])
+        .minute(+patient?.data?.nextVisit?.visitTime?.split(":")[1])
+    )
+    setBirthDate(dayjs(patientInfo?.birthDate))
   }, [patient])
 
   const editInfo = async (e) => {
@@ -133,6 +141,7 @@ const PatientDetails = () => {
                 type="text"
                 name="patientPhone"
                 id="patientPhone"
+                disabled
                 className="form-control"
                 value={patientInfo?.phone || ""}
                 onChange={(e) => {
@@ -146,17 +155,29 @@ const PatientDetails = () => {
             </div>
             <div className="birth-date">
               <label htmlFor="patientBirthDate">تاريخ الميلاد</label>
-              <input
-                type="date"
+              <DatePicker
                 name="patientBirthDate"
                 id="patientBirthDate"
                 className="form-control"
-                value={patientInfo?.birthDate || ""}
-                onChange={(e) => {
+                value={birthDate}
+                format="DD-MM-YYYY"
+                openTo="year"
+                onChange={(date) => {
+                  setBirthDate(date)
                   setpatientInfo({
                     ...patientInfo,
-                    birthDate: e.currentTarget.value,
+                    birthDate: date.format("YYYY/MM/DD"),
                   })
+                }}
+                slotProps={{
+                  textField: {
+                    helperText:
+                      "العمر: " + // currentAge =  
+                        (+dayjs(new Date()).get("year") -
+                          +dayjs(birthDate).get("year")) +
+                        (((+dayjs(new Date()).get("year") -
+                          +dayjs(birthDate).get("year")) < 10) ? " أعوام" : ' عام'),
+                  },
                 }}
               />
             </div>
@@ -453,7 +474,6 @@ const PatientDetails = () => {
                   labelId="illness"
                   id="demo-controlled-open-select"
                   value={
-                    // console.log(patientInfo?.nextVisit?.reason)
                     {
                       value: patientInfo?.nextVisit?.reason,
                       label: patientInfo?.nextVisit?.reason,
@@ -470,40 +490,6 @@ const PatientDetails = () => {
                   }}
                   options={services}
                 />
-
-                {/* <select
-                  className="form-control w-auto"
-                  name="illness"
-                  id="illness"
-                  value={patientInfo?.nextVisit?.reason || "أشعة عادية"}
-                  onChange={(e) => {
-                    setpatientInfo({
-                      ...patientInfo,
-                      nextVisit: {
-                        ...patientInfo?.nextVisit,
-                        reason: e.currentTarget.value,
-                      },
-                    });
-                  }}
-                >
-                  <option value="أشعة عادية">أشعة عادية</option>
-                  <option value="حشو بلاتين">حشو بلاتين</option>
-                  <option value="حشو كمبوزت">حشو كمبوزت</option>
-                  <option value="حشو عصب">حشو عصب</option>
-                  <option value="حشو عادى أطفال">حشو عادى أطفال</option>
-                  <option value="حشو عصب أطفال">حشو عصب أطفال</option>
-                  <option value="طاقم متحرك">طاقم متحرك</option>
-                  <option value="زراعة">زراعة</option>
-                  <option value="خلع عادي">خلع عادي</option>
-                  <option value="خلع ضرس عقل">خلع ضرس عقل</option>
-                  <option value="خلع ضرس عقل مدفون">خلع ضرس عقل مدفون</option>
-                  <option value="طربوش">طربوش</option>
-                  <option value="كوبري">كوبري</option>
-                  <option value="تنظيف جير">تنظيف جير</option>
-                  <option value="تلميع">تلميع</option>
-                  <option value="تبييض">تبييض</option>
-                  <option value="علاج">علاج</option>
-                </select> */}
               </div>
               <div className="visit-time">
                 <label htmlFor="visitTime">موعد الزيارة</label>
@@ -512,12 +498,9 @@ const PatientDetails = () => {
                   id="visitTime"
                   name="visitTime"
                   views={["hours", "minutes"]}
-                  value={dayjs()
-                    .hour(+patient?.data?.nextVisit?.visitTime?.split(":")[0])
-                    .minute(
-                      +patient?.data?.nextVisit?.visitTime?.split(":")[1]
-                    )}
-                  onChange={(time) =>
+                  value={timeVisit}
+                  onChange={(time) => {
+                    setTimeVisit(time)
                     setpatientInfo({
                       ...patientInfo,
                       nextVisit: {
@@ -525,7 +508,7 @@ const PatientDetails = () => {
                         visitTime: `${time.get("hour")}:${time.get("minute")}`,
                       },
                     })
-                  }
+                  }}
                   slotProps={{
                     textField: {
                       helperText: "HH:MM aa",
@@ -566,7 +549,7 @@ const PatientDetails = () => {
             </div>
           </div>
           <button className="align-self-start" type="submit">
-            تعديل {/* أكمل البيانات */}
+            تعديل
           </button>
         </form>
       </div>

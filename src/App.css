@@ -48,20 +48,20 @@ body {
   background-color: var(--blue);
 }
 /* for customize date and time picker */
-:is(.visit-date, .visit-time) > div {
+:is(.visit-date, .visit-time, .birth-date) > div {
   background: #fff;
   direction: ltr;
   display: flex;
 }
-:is(.visit-date, .visit-time) > div > div + p {
+:is(.visit-date, .visit-time, .birth-date) > div > div + p {
   background: var(--white);
   margin: 0;
   padding: 5px ;
 }
-:is(.visit-date, .visit-time) > div input {
+:is(.visit-date, .visit-time, .birth-date) > div input {
   padding: 8px 5px !important;
 }
-:is(.visit-date, .visit-time) > div button {
+:is(.visit-date, .visit-time, .birth-date) > div button {
   padding: 5px !important;
 }
 .css-trxt40-MuiTimePickerToolbar-hourMinuteLabel {

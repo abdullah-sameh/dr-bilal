@@ -276,7 +276,7 @@ export default function Reservation() {
                     className="btn btn-primary mx-1"
                     to={`./${patient?.id}`}
                   >
-                    تفاصيل
+                    أكمل البيانات
                   </Link>
                   <button
                     onClick={() => attendHandler(patient)}
