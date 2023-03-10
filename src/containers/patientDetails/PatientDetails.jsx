@@ -1,4 +1,3 @@
-import { MenuItem } from "@mui/material";
 import Select from "react-select";
 import { DatePicker, MobileTimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
@@ -21,7 +20,15 @@ const PatientDetails = () => {
   const patient = useSelector((state) => state.patientById)
   const [patientInfo, setpatientInfo] = useState({})
   const [reasonSelected, setReasonSelected] = useState()
-
+  const weekDays = [
+    "الأحد",
+    "الإثنين",
+    "الثلاثاء",
+    "الأربعاء",
+    "الخميس",
+    "الجمعة",
+    "السبت",
+  ]
   const services = [
     { value: "كشف", label: "كشف" },
     { value: "أشعة عادية", label: "أشعة عادية" },
@@ -187,64 +194,65 @@ const PatientDetails = () => {
               />
             </div>
           </div>
-          <div className="marital-status">
-            <h4 className="title">الحالة الاجتماعية</h4>
-            <div className="status-container">
-              <label htmlFor="unmarried">أعزب</label>
-              <input
-                type="radio"
-                name="socialStatus"
-                id="unmarried"
-                value={"unmarried"}
-                checked={
-                  document.querySelector("#unmarried")?.value ===
-                    patientInfo?.maritalStatus || false
-                }
-                onChange={(e) => {
-                  e.currentTarget.checked &&
-                    setpatientInfo({
-                      ...patientInfo,
-                      maritalStatus: e.currentTarget.value,
-                    })
-                }}
-              />
+          <div className="d-flex justify-content-center flex-wrap gap-3">
+            <div className="marital-status flex-grow-1">
+              <h4 className="title">الحالة الاجتماعية</h4>
+              <div className="status-container">
+                <label htmlFor="unmarried">أعزب</label>
+                <input
+                  type="radio"
+                  name="socialStatus"
+                  id="unmarried"
+                  value={"unmarried"}
+                  checked={
+                    document.querySelector("#unmarried")?.value ===
+                      patientInfo?.maritalStatus || false
+                  }
+                  onChange={(e) => {
+                    e.currentTarget.checked &&
+                      setpatientInfo({
+                        ...patientInfo,
+                        maritalStatus: e.currentTarget.value,
+                      })
+                  }}
+                />
 
-              <label htmlFor="married">متزوج</label>
-              <input
-                type="radio"
-                name="socialStatus"
-                id="married"
-                value={"married"}
-                checked={
-                  document.querySelector("#married")?.value ===
-                    patientInfo?.maritalStatus || false
-                }
-                onChange={(e) => {
-                  e.currentTarget.checked &&
+                <label htmlFor="married">متزوج</label>
+                <input
+                  type="radio"
+                  name="socialStatus"
+                  id="married"
+                  value={"married"}
+                  checked={
+                    document.querySelector("#married")?.value ===
+                      patientInfo?.maritalStatus || false
+                  }
+                  onChange={(e) => {
+                    e.currentTarget.checked &&
+                      setpatientInfo({
+                        ...patientInfo,
+                        maritalStatus: e.currentTarget.value,
+                      })
+                  }}
+                />
+              </div>
+            </div>
+            <div className="pregnant-status flex-grow-1">
+              <h4 className="title">هل أنت؟</h4>
+              <div className="status-container">
+                <label htmlFor="pregnant">حامل</label>
+                <input
+                  type="checkbox"
+                  name="pregnant"
+                  id="pregnant"
+                  checked={patientInfo?.pregnant || false}
+                  onChange={(e) =>
                     setpatientInfo({
                       ...patientInfo,
-                      maritalStatus: e.currentTarget.value,
+                      pregnant: e.currentTarget.checked,
                     })
-                }}
-              />
-            </div>
-          </div>
-          <div className="pregnant-status">
-            <h4 className="title">هل أنت؟</h4>
-            <div className="status-container">
-              <label htmlFor="pregnant">حامل</label>
-              <input
-                type="checkbox"
-                name="pregnant"
-                id="pregnant"
-                checked={patientInfo?.pregnant || false}
-                onChange={(e) =>
-                  setpatientInfo({
-                    ...patientInfo,
-                    pregnant: e.currentTarget.checked,
-                  })
-                }
-              />
+                  }
+                />
 
                 <label htmlFor="breastfeeding">مرضعة</label>
                 <input
@@ -443,14 +451,12 @@ const PatientDetails = () => {
                 <label htmlFor="illness">سبب الزيارة</label>
 
                 <Select
-                  name="illness"
-                  id="illness"
-                  value={{
-                    value: patientInfo?.data?.nextVisit?.reason || "كشف",
-                    label: patientInfo?.data?.nextVisit?.reason || "كشف",
-                  }}
-                  onChange={(reason) => {
-                    console.log(reason)
+                  labelId="illness"
+                  id="demo-controlled-open-select"
+                  defaultInputValue={
+                    patientInfo?.nextVisit?.reason || "أشعة عادية"
+                  }
+                  onChange={(e) => {
                     setpatientInfo({
                       ...patientInfo,
                       nextVisit: {
@@ -503,9 +509,11 @@ const PatientDetails = () => {
                   id="visitTime"
                   name="visitTime"
                   views={["hours", "minutes"]}
-                  value={dayjs(new Date())
-                    .hour(+patient?.data?.nextVisit?.visitTime.split(":")[0])
-                    .minute(+patient?.data?.nextVisit?.visitTime.split(":")[1])}
+                  value={dayjs()
+                    .hour(+patient?.data?.nextVisit?.visitTime?.split(":")[0])
+                    .minute(
+                      +patient?.data?.nextVisit?.visitTime?.split(":")[1]
+                    )}
                   onChange={(time) =>
                     setpatientInfo({
                       ...patientInfo,
@@ -543,10 +551,7 @@ const PatientDetails = () => {
                 <DatePicker
                   id="visitDate"
                   name="visitDate"
-                  value={dayjs(new Date())
-                    .date(+patientInfo?.nextVisit?.visitDate.split("-")[2])
-                    .month(+patientInfo?.nextVisit?.visitDate.split("-")[1] - 1)
-                    .year(+patientInfo?.nextVisit?.visitDate.split("-")[0])}
+                  value={dayjs(patientInfo?.nextVisit?.visitDate)}
                   onChange={(date) =>
                     setpatientInfo({
                       ...patientInfo,

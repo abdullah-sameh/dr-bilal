@@ -23,7 +23,7 @@ export default function Add() {
   const [selectedTime, setSelectedTime] = useState(dayjs())
   const [visitReason, setVisitReason] = useState()
 
-  const [whatsCheck, setWhatsCheck] = useState([false, ""])
+  const [whatsCheck, setWhatsCheck] = useState([false, ''])
   const weekDays = [
     "الأحد",
     "الإثنين",
@@ -92,16 +92,14 @@ export default function Add() {
         formData?.illness?.value !== ""
           ? {
               reason: visitReason.value,
-              visitTime: `${selectedTime.get("hour")}:${selectedTime.get(
-                "minute"
-              )}`,
+              visitTime: `${selectedTime.get("hour")}:${selectedTime.get('minute')}`,
               visitDate: selectedDate?.format("YYYY-MM-DD"),
               firstTime: true,
             }
           : {},
       opinion: formData?.patientOpinion?.value,
     }
-
+    
     Swal.fire({
       title: "هل أنت متأكد؟",
       text: `من أنك تريد حجز موعد ل ${formData?.patientName?.value}`,
@@ -247,7 +245,7 @@ export default function Add() {
                   onChange={() =>
                     whatsCheck[0]
                       ? setWhatsCheck([false, ""])
-                      : setWhatsCheck([true, "animate__rubberBand"])
+                      : setWhatsCheck([true, 'animate__rubberBand'])
                   }
                 />
               </div>
@@ -448,7 +446,7 @@ export default function Add() {
                     slotProps={{
                       textField: {
                         helperText:
-                          "DD / MM / YYYY -- " + weekDays[selectedDate.day()],
+                          "DD / MM / YYYY -- " + weekDays[selectedDate?.day()],
                       },
                     }}
                   />
