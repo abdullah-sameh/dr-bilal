@@ -126,8 +126,14 @@ export default function Data() {
                   </td>
                   <td>
                     <Link
+                      className="btn btn-success mx-1"
+                      to={`/data/newBook/${patient?.id}`}
+                    >
+                      حجز جديد
+                    </Link>
+                    <Link
                       className="btn btn-primary mx-1"
-                      to={`/${patient?.id}`}
+                      to={`/data/details/${patient?.id}`}
                     >
                       تفاصيل
                     </Link>
@@ -148,5 +154,5 @@ export default function Data() {
         <Route path="/:patientId" element={<PatientDetails />} />
       </Routes>
     </>
-  );
+  )
 }

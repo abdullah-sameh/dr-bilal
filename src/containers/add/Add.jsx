@@ -101,8 +101,6 @@ export default function Add() {
             }
           : {},
       opinion: formData?.patientOpinion?.value,
-      requiredMoney: 0,
-      notes: "",
     };
 
     Swal.fire({
@@ -189,7 +187,7 @@ export default function Add() {
                 <input
                   type="text"
                   name="patientName"
-                  id="patientName"
+                  id="patientNameField"
                   className="form-control"
                   required
                 />
@@ -199,7 +197,7 @@ export default function Add() {
                 <input
                   type="tel"
                   name="patientPhone"
-                  id="patientPhone"
+                  id="patientPhoneField"
                   className="form-control"
                   required
                 />
@@ -458,6 +456,28 @@ export default function Add() {
               </div>
             </div>
             <button type="submit">تسجيل</button>
+
+            <button
+              className="whats-btn"
+              type="button"
+              onClick={() => {
+                const name =
+                  document.getElementById("#patientNameField")?.value;
+                const phone =
+                  document.getElementById("#patientPhoneField")?.value;
+                const date = selectedDate;
+                const time = selectedTime;
+                const message = `لقد تم حجز معاد باسم: ${name}%0aبمعاد: ${date.format(
+                  "DD/MM/YYYY"
+                )}%0aالساعة: ${time.format("hh:mm a")}`;
+
+                const whatsappurl = `https://wa.me/201026227264?text=${message}`;
+                console.log(phone);
+                window.open(whatsappurl, "_blank").focus();
+              }}
+            >
+              ارسل وتساب
+            </button>
           </form>
         </div>
       </div>

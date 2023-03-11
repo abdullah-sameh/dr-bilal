@@ -1,29 +1,34 @@
-import Select from "react-select";
-import { DatePicker, MobileTimePicker } from "@mui/x-date-pickers";
-import dayjs from "dayjs";
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import printLogo from "../../assets/colored_logo.png";
-import adultMouth from "../../assets/adult_mouth.jpg";
-import kidsMouth from "../../assets/kids_mouth.jpg";
-import Swal from "sweetalert2";
-import { auth, db } from "../../firebase";
-import { getPatientById } from "../../rtk/slices/patientSlice";
-import { setUser } from "../../rtk/slices/userSlice";
-import "./patientDetails.css";
+import Select from "react-select"
+import { DatePicker, MobileTimePicker } from "@mui/x-date-pickers"
+import dayjs from "dayjs"
+import { onAuthStateChanged } from "firebase/auth"
+import { doc, setDoc } from "firebase/firestore"
+import React, { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { useHref, useNavigate, useParams } from "react-router-dom"
+import printLogo from "../../assets/colored_logo.png"
+import adultMouth from "../../assets/adult_mouth.jpg"
+import kidsMouth from "../../assets/kids_mouth.jpg"
+import Swal from "sweetalert2"
+import { auth, db } from "../../firebase"
+import { getPatientById } from "../../rtk/slices/patientSlice"
+import { setUser } from "../../rtk/slices/userSlice"
+import "./patientDetails.css"
 
 const PatientDetails = () => {
-  const { patientId } = useParams();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const { patientId } = useParams()
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const url = useHref()
 
-  const patient = useSelector((state) => state.patientById);
-  const [timeVisit, setTimeVisit] = useState(dayjs("none"));
-  const [birthDate, setBirthDate] = useState(dayjs("none"));
-  const [patientInfo, setpatientInfo] = useState({});
+  const patient = useSelector((state) => state.patientById)
+  const [timeVisit, setTimeVisit] = useState(dayjs("none"))
+  const [birthDate, setBirthDate] = useState(dayjs("none"))
+  const [newBook, setNewBook] = useState(false)
+  const [inDetails, setInDetails] = useState(false)
+  const [inFillForm, setInFillForm] = useState(false)
+  const [inEdit, setInEdit] = useState(false)
+  const [patientInfo, setpatientInfo] = useState({})
   const weekDays = [
     "الأحد",
     "الإثنين",
@@ -32,7 +37,7 @@ const PatientDetails = () => {
     "الخميس",
     "الجمعة",
     "السبت",
-  ];
+  ]
   const services = [
     { value: "كشف", label: "كشف" },
     { value: "أشعة عادية", label: "أشعة عادية" },
@@ -50,32 +55,36 @@ const PatientDetails = () => {
     { value: "تبييض", label: "تبييض" },
     { value: "علاج", label: "علاج" },
     { value: "تقويم", label: "تقويم" },
-  ];
+  ]
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        dispatch(setUser(user));
+        dispatch(setUser(user))
       } else {
-        navigate("/");
+        navigate("/")
       }
-    });
-    dispatch(getPatientById(patientId));
+    })
+    dispatch(getPatientById(patientId))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [patientId]);
+  }, [patientId])
 
   useEffect(() => {
-    setpatientInfo(patient.data);
+    setpatientInfo(patient.data)
     setTimeVisit(
       dayjs()
         .hour(+patient?.data?.nextVisit?.visitTime?.split(":")[0])
         .minute(+patient?.data?.nextVisit?.visitTime?.split(":")[1])
-    );
-    setBirthDate(dayjs(patientInfo?.birthDate));
-  }, [patient]);
+    )
+    setBirthDate(dayjs(patientInfo?.birthDate))
+    url.includes("newBook") ? setNewBook(false) : setNewBook(true)
+    url.includes("details") ? setInDetails(true) : setInDetails(false)
+    url.includes("fillForm") ? setInFillForm(true) : setInFillForm(false)
+    url.includes("editDate") ? setInEdit(true) : setInEdit(false)
+  }, [patient])
 
   const editInfo = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     Swal.fire({
       title: "هل أنت متأكد؟",
       text: `من أنك تريد تعديل بيانات ${patientInfo?.name}؟`,
@@ -87,7 +96,7 @@ const PatientDetails = () => {
       if (result.isConfirmed) {
         await setDoc(doc(db, "patients", patientId), patientInfo)
           .then(() => {
-            dispatch(getPatientById(patientId));
+            dispatch(getPatientById(patientId))
             Swal.fire({
               position: "center",
               icon: "success",
@@ -98,33 +107,29 @@ const PatientDetails = () => {
             navigate(-1);
           })
           .catch((e) => {
-            console.log(e.message);
+            console.log(e.message)
             Swal.fire({
               icon: "error",
               title: "خطأ",
               text: "حاول مرة أخرى!",
-            });
-          });
+            })
+          })
       }
-    });
-  };
-
-  console.log(patientInfo);
+    })
+  }
 
   const handleMouthByAge = (birthDate) => {
-    let birthDt = new Date(birthDate);
-    let currentDt = new Date();
+    let birthDt = new Date(birthDate)
+    let currentDt = new Date()
 
-    let age = currentDt.getFullYear() - birthDt.getFullYear();
+    let age = currentDt.getFullYear() - birthDt.getFullYear()
 
     if (age >= 11) {
-      return true;
+      return true
     } else {
-      return false;
+      return false
     }
-  };
-
-  const tableRows = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+  }
 
   return (
     <>
@@ -132,10 +137,19 @@ const PatientDetails = () => {
         <div className="container">
           <form
             onSubmit={editInfo}
-            className="editPatientInfo d-flex flex-column gap-4"
+            className="editPatientInfo d-flex flex-column gap-4 w-100"
           >
-            <h3 className="patientCode">{patientInfo?.code}</h3>
-            <div className="main-info gap-3">
+            <div className="header">
+              <div className="logo">
+                <img src={printLogo} alt="printedLogo" />
+                <div>
+                  <h1>آراك</h1>
+                  <p className="fw-bold">د. بلال شعبان الزهيري</p>
+                </div>
+              </div>
+              <h1 className="title">{patientInfo?.code}</h1>
+            </div>
+            {!inEdit && <div className="main-info gap-3">
               <div className="name">
                 <label htmlFor="patientName">اسم العميل</label>
                 <input
@@ -148,7 +162,7 @@ const PatientDetails = () => {
                     setpatientInfo({
                       ...patientInfo,
                       name: e.currentTarget.value,
-                    });
+                    })
                   }}
                   required
                 />
@@ -165,295 +179,308 @@ const PatientDetails = () => {
                     setpatientInfo({
                       ...patientInfo,
                       phone: e.currentTarget.value,
-                    });
+                    })
                   }}
                   required
                 />
               </div>
-              <div className="birth-date">
-                <label htmlFor="patientBirthDate">تاريخ الميلاد</label>
-                <DatePicker
-                  name="patientBirthDate"
-                  id="patientBirthDate"
-                  className="form-control"
-                  value={birthDate}
-                  format="DD-MM-YYYY"
-                  openTo="year"
-                  onChange={(date) => {
-                    setBirthDate(date);
-                    setpatientInfo({
-                      ...patientInfo,
-                      birthDate: date.format("YYYY/MM/DD"),
-                    });
-                  }}
-                  slotProps={{
-                    textField: {
-                      helperText:
-                        "العمر: " + // currentAge =
-                        (+dayjs(new Date()).get("year") -
-                          +dayjs(birthDate).get("year")) +
-                        (+dayjs(new Date()).get("year") -
-                          +dayjs(birthDate).get("year") <
-                        10
-                          ? " أعوام"
-                          : " عام"),
-                    },
-                  }}
-                />
-              </div>
-              <div className="job">
-                <label htmlFor="patientJob">الوظيفة</label>
-                <input
-                  type="text"
-                  name="patientJob"
-                  id="patientJob"
-                  className="form-control"
-                  value={patientInfo?.job || ""}
-                  onChange={(e) => {
-                    setpatientInfo({
-                      ...patientInfo,
-                      job: e.currentTarget.value,
-                    });
-                  }}
-                />
-              </div>
-              <div className="adresse">
-                <label htmlFor="patientAdresse">العنوان</label>
-                <input
-                  type="text"
-                  name="patientAdresse"
-                  id="patientAdresse"
-                  className="form-control"
-                  value={patientInfo?.adresse || ""}
-                  onChange={(e) => {
-                    setpatientInfo({
-                      ...patientInfo,
-                      adresse: e.currentTarget.value,
-                    });
-                  }}
-                />
-              </div>
-            </div>
-            <div className="d-flex justify-content-center flex-wrap gap-3">
-              <div className="marital-status flex-grow-1">
-                <h4 className="title">الحالة الاجتماعية</h4>
-                <div className="status-container">
-                  <label htmlFor="unmarried">أعزب</label>
-                  <input
-                    type="radio"
-                    name="socialStatus"
-                    id="unmarried"
-                    value={"unmarried"}
-                    checked={
-                      document.querySelector("#unmarried")?.value ===
-                        patientInfo?.maritalStatus || false
-                    }
-                    onChange={(e) => {
-                      e.currentTarget.checked &&
+              {newBook && (
+                <>
+                  <div className="birth-date">
+                    <label htmlFor="patientBirthDate">تاريخ الميلاد</label>
+                    <DatePicker
+                      name="patientBirthDate"
+                      id="patientBirthDate"
+                      className="form-control"
+                      value={birthDate}
+                      format="DD-MM-YYYY"
+                      openTo="year"
+                      onChange={(date) => {
+                        setBirthDate(date)
                         setpatientInfo({
                           ...patientInfo,
-                          maritalStatus: e.currentTarget.value,
-                        });
-                    }}
-                  />
+                          birthDate: date.format("YYYY/MM/DD"),
+                        })
+                      }}
+                      slotProps={{
+                        textField: {
+                          helperText:
+                            "العمر: " + // currentAge =
+                            dayjs(new Date()).diff(dayjs(birthDate), "year") +
+                            (+dayjs(new Date()).get("year") -
+                              +dayjs(birthDate).get("year") <
+                            10
+                              ? " أعوام"
+                              : " عام"),
+                        },
+                      }}
+                    />
+                  </div>
+                  <div className="job">
+                    <label htmlFor="patientJob">الوظيفة</label>
+                    <input
+                      type="text"
+                      name="patientJob"
+                      id="patientJob"
+                      className="form-control"
+                      value={patientInfo?.job || ""}
+                      onChange={(e) => {
+                        setpatientInfo({
+                          ...patientInfo,
+                          job: e.currentTarget.value,
+                        })
+                      }}
+                    />
+                  </div>
+                  <div className="adresse">
+                    <label htmlFor="patientAdresse">العنوان</label>
+                    <input
+                      type="text"
+                      name="patientAdresse"
+                      id="patientAdresse"
+                      className="form-control"
+                      value={patientInfo?.adresse || ""}
+                      onChange={(e) => {
+                        setpatientInfo({
+                          ...patientInfo,
+                          adresse: e.currentTarget.value,
+                        })
+                      }}
+                    />
+                  </div>
+                </>
+              )}
+            </div>}
 
-                  <label htmlFor="married">متزوج</label>
-                  <input
-                    type="radio"
-                    name="socialStatus"
-                    id="married"
-                    value={"married"}
-                    checked={
-                      document.querySelector("#married")?.value ===
-                        patientInfo?.maritalStatus || false
-                    }
-                    onChange={(e) => {
-                      e.currentTarget.checked &&
-                        setpatientInfo({
-                          ...patientInfo,
-                          maritalStatus: e.currentTarget.value,
-                        });
-                    }}
-                  />
+            {newBook && !inEdit && (
+              <>
+                <div className="d-flex justify-content-center flex-wrap gap-3">
+                  <div className="marital-status flex-grow-1">
+                    <h4 className="title">الحالة الاجتماعية</h4>
+                    <div className="status-container">
+                      <label htmlFor="unmarried">أعزب</label>
+                      <input
+                        type="radio"
+                        name="socialStatus"
+                        id="unmarried"
+                        value={"unmarried"}
+                        checked={
+                          document.querySelector("#unmarried")?.value ===
+                            patientInfo?.maritalStatus || false
+                        }
+                        onChange={(e) => {
+                          e.currentTarget.checked &&
+                            setpatientInfo({
+                              ...patientInfo,
+                              maritalStatus: e.currentTarget.value,
+                            })
+                        }}
+                      />
+
+                      <label htmlFor="married">متزوج</label>
+                      <input
+                        type="radio"
+                        name="socialStatus"
+                        id="married"
+                        value={"married"}
+                        checked={
+                          document.querySelector("#married")?.value ===
+                            patientInfo?.maritalStatus || false
+                        }
+                        onChange={(e) => {
+                          e.currentTarget.checked &&
+                            setpatientInfo({
+                              ...patientInfo,
+                              maritalStatus: e.currentTarget.value,
+                            })
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="pregnant-status flex-grow-1">
+                    <h4 className="title">هل أنت؟</h4>
+                    <div className="status-container">
+                      <label htmlFor="pregnant">حامل</label>
+                      <input
+                        type="checkbox"
+                        name="pregnant"
+                        id="pregnant"
+                        checked={patientInfo?.pregnant || false}
+                        onChange={(e) =>
+                          setpatientInfo({
+                            ...patientInfo,
+                            pregnant: e.currentTarget.checked,
+                          })
+                        }
+                      />
+
+                      <label htmlFor="breastfeeding">مرضعة</label>
+                      <input
+                        type="checkbox"
+                        name="breastfeeding"
+                        id="breastfeeding"
+                        checked={patientInfo?.breastfeeding || false}
+                        onChange={(e) =>
+                          setpatientInfo({
+                            ...patientInfo,
+                            breastfeeding: e.currentTarget.checked,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="sick-history flex-grow-1">
+                    <div className="title">
+                      <h4>هل لديك أمراض مثل؟</h4>
+                    </div>
+                    <div className="popular-sicks">
+                      <div className="sick-container">
+                        <label htmlFor="diabetes">سكر</label>
+                        <input
+                          type="checkbox"
+                          name="diabetes"
+                          id="diabetes"
+                          value={"سكر"}
+                          checked={patientInfo?.popularSicks?.diabetes || false}
+                          onChange={(e) =>
+                            setpatientInfo({
+                              ...patientInfo,
+                              popularSicks: {
+                                ...patientInfo.popularSicks,
+                                diabetes: e.currentTarget.checked,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="sick-container">
+                        <label htmlFor="highBloodPressure">ضغط</label>
+                        <input
+                          type="checkbox"
+                          name="highBloodPressure"
+                          value="ضغط"
+                          id="highBloodPressure"
+                          checked={
+                            patientInfo?.popularSicks?.highBloodPressure ||
+                            false
+                          }
+                          onChange={(e) =>
+                            setpatientInfo({
+                              ...patientInfo,
+                              popularSicks: {
+                                ...patientInfo.popularSicks,
+                                highBloodPressure: e.currentTarget.checked,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="sick-container">
+                        <label htmlFor="smoker">مدخن</label>
+                        <input
+                          type="checkbox"
+                          name="smoker"
+                          id="smoker"
+                          value="تدخين"
+                          checked={patientInfo?.popularSicks?.smoker || false}
+                          onChange={(e) =>
+                            setpatientInfo({
+                              ...patientInfo,
+                              popularSicks: {
+                                ...patientInfo.popularSicks,
+                                smoker: e.currentTarget.checked,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="pregnant-status flex-grow-1">
-                <h4 className="title">هل أنت؟</h4>
-                <div className="status-container">
-                  <label htmlFor="pregnant">حامل</label>
+                <div className="more-sicks">
+                  <label htmlFor="anotherSick">
+                    هل يوجد أمراض أخرى؟اذكرها. (فى حالة وجود اكثر من مرض يرجى
+                    ضغط مسافة مرتين بين الواحد و الآخر)
+                  </label>
                   <input
-                    type="checkbox"
-                    name="pregnant"
-                    id="pregnant"
-                    checked={patientInfo?.pregnant || false}
-                    onChange={(e) =>
+                    type="text"
+                    name="anotherSick"
+                    id="anotherSick"
+                    className="form-control"
+                    value={patientInfo?.otherSicks?.join("  ") || ""}
+                    onChange={(e) => {
                       setpatientInfo({
                         ...patientInfo,
-                        pregnant: e.currentTarget.checked,
+                        otherSicks: e.currentTarget.value
+                          .toString()
+                          .split("  "),
                       })
-                    }
+                    }}
                   />
-
-                  <label htmlFor="breastfeeding">مرضعة</label>
+                </div>
+                <div className="surgery-operations">
+                  <label htmlFor="surgeryOperations">
+                    إذا أجريت عملية فالعام السابق، اذكرها. (فى حالة وجود اكثر من
+                    عملية يرجى ضغط مسافة مرتين بين الواحدة و الأخرى)
+                  </label>
                   <input
-                    type="checkbox"
-                    name="breastfeeding"
-                    id="breastfeeding"
-                    checked={patientInfo?.breastfeeding || false}
-                    onChange={(e) =>
+                    type="text"
+                    name="surgeryOperations"
+                    id="surgeryOperations"
+                    className="form-control"
+                    value={
+                      patientInfo?.previousSurgeryOperations?.join("  ") || ""
+                    }
+                    onChange={(e) => {
                       setpatientInfo({
                         ...patientInfo,
-                        breastfeeding: e.currentTarget.checked,
+                        previousSurgeryOperations: e.currentTarget.value
+                          .toString()
+                          .split("  "),
                       })
-                    }
+                    }}
                   />
                 </div>
-              </div>
-              <div className="sick-history flex-grow-1">
-                <div className="title">
-                  <h4>هل لديك أمراض مثل؟</h4>
+                <div className="allergy">
+                  <label htmlFor="patientAllergy">
+                    هل لديك حساسية من أى شئ؟ اذكره. (فى حالة وجود اكثر من شئ
+                    يرجى ضغط مسافة مرتين بين الواحد و الأخر)
+                  </label>
+                  <input
+                    type="text"
+                    name="patientAllergy"
+                    id="patientAllergy"
+                    className="form-control"
+                    value={patientInfo?.allergy?.join("  ") || ""}
+                    onChange={(e) => {
+                      setpatientInfo({
+                        ...patientInfo,
+                        allergy: e.currentTarget.value.toString().split("  "),
+                      })
+                    }}
+                  />
                 </div>
-                <div className="popular-sicks">
-                  <div className="sick-container">
-                    <label htmlFor="diabetes">سكر</label>
-                    <input
-                      type="checkbox"
-                      name="diabetes"
-                      id="diabetes"
-                      value={"سكر"}
-                      checked={patientInfo?.popularSicks?.diabetes || false}
-                      onChange={(e) =>
-                        setpatientInfo({
-                          ...patientInfo,
-                          popularSicks: {
-                            ...patientInfo.popularSicks,
-                            diabetes: e.currentTarget.checked,
-                          },
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="sick-container">
-                    <label htmlFor="highBloodPressure">ضغط</label>
-                    <input
-                      type="checkbox"
-                      name="highBloodPressure"
-                      value="ضغط"
-                      id="highBloodPressure"
-                      checked={
-                        patientInfo?.popularSicks?.highBloodPressure || false
-                      }
-                      onChange={(e) =>
-                        setpatientInfo({
-                          ...patientInfo,
-                          popularSicks: {
-                            ...patientInfo.popularSicks,
-                            highBloodPressure: e.currentTarget.checked,
-                          },
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="sick-container">
-                    <label htmlFor="smoker">مدخن</label>
-                    <input
-                      type="checkbox"
-                      name="smoker"
-                      id="smoker"
-                      value="تدخين"
-                      checked={patientInfo?.popularSicks?.smoker || false}
-                      onChange={(e) =>
-                        setpatientInfo({
-                          ...patientInfo,
-                          popularSicks: {
-                            ...patientInfo.popularSicks,
-                            smoker: e.currentTarget.checked,
-                          },
-                        })
-                      }
-                    />
-                  </div>
+                <div className="opinion">
+                  <label htmlFor="patientOpinion">ليه اخترت آراك؟</label>
+                  <input
+                    type="text"
+                    name="patientOpinion"
+                    id="patientOpinion"
+                    className="form-control"
+                    value={patientInfo?.opinion || ""}
+                    onChange={(e) => {
+                      setpatientInfo({
+                        ...patientInfo,
+                        opinion: e.currentTarget.value,
+                      })
+                    }}
+                  />
                 </div>
-              </div>
-            </div>
-            <div className="more-sicks">
-              <label htmlFor="anotherSick">
-                هل يوجد أمراض أخرى؟اذكرها. (فى حالة وجود اكثر من مرض يرجى ضغط
-                مسافة مرتين بين الواحد و الآخر)
-              </label>
-              <input
-                type="text"
-                name="anotherSick"
-                id="anotherSick"
-                className="form-control"
-                value={patientInfo?.otherSicks?.join("  ") || ""}
-                onChange={(e) => {
-                  setpatientInfo({
-                    ...patientInfo,
-                    otherSicks: e.currentTarget.value.toString().split("  "),
-                  });
-                }}
-              />
-            </div>
-            <div className="surgery-operations">
-              <label htmlFor="surgeryOperations">
-                هل أجريت عملية جراحية فى العام السابق؟ ماهى. (فى حالة وجود اكثر
-                من عملية يرجى ضغط مسافة مرتين بين الواحدة و الأخرى)
-              </label>
-              <input
-                type="text"
-                name="surgeryOperations"
-                id="surgeryOperations"
-                className="form-control"
-                value={patientInfo?.previousSurgeryOperations?.join("  ") || ""}
-                onChange={(e) => {
-                  setpatientInfo({
-                    ...patientInfo,
-                    previousSurgeryOperations: e.currentTarget.value
-                      .toString()
-                      .split("  "),
-                  });
-                }}
-              />
-            </div>
-            <div className="allergy">
-              <label htmlFor="patientAllergy">
-                هل لديك حساسية من أى شئ؟ اذكره. (فى حالة وجود اكثر من شئ يرجى
-                ضغط مسافة مرتين بين الواحد و الأخر)
-              </label>
-              <input
-                type="text"
-                name="patientAllergy"
-                id="patientAllergy"
-                className="form-control"
-                value={patientInfo?.allergy?.join("  ") || ""}
-                onChange={(e) => {
-                  setpatientInfo({
-                    ...patientInfo,
-                    allergy: e.currentTarget.value.toString().split("  "),
-                  });
-                }}
-              />
-            </div>
-            <div className="opinion">
-              <label htmlFor="patientOpinion">ليه اخترت آراك؟</label>
-              <input
-                type="text"
-                name="patientOpinion"
-                id="patientOpinion"
-                className="form-control"
-                value={patientInfo?.opinion || ""}
-                onChange={(e) => {
-                  setpatientInfo({
-                    ...patientInfo,
-                    opinion: e.currentTarget.value,
-                  });
-                }}
-              />
-            </div>
-            <div className="previous-visits">
-              <h4 className="title">الزيارات السابقة:-</h4>
-              {patientInfo?.previousVisits?.length ? (
+              </>
+            )}
+            {patientInfo?.previousVisits?.length !== 0 && (
+              <div className="previous-visits">
+                <h4 className="title">الزيارات السابقة:-</h4>
                 <table className="previous-visits table table-striped w-lg-100 w-md-auto">
                   <thead>
                     <tr>
@@ -482,15 +509,14 @@ const PatientDetails = () => {
                     ))}
                   </tbody>
                 </table>
-              ) : (
-                <p>لايوجد زيارات سابقة</p>
-              )}
-            </div>
-            <div className="next-visits">
-              <h4 className="title">الزيارة القادمة:-</h4>
-              <div className="content gap-3">
-                <div className="reason">
-                  <label htmlFor="illness">سبب الزيارة</label>
+              </div>
+            )}
+            {inEdit && (
+              <div className="next-visits">
+                <h4 className="title">الزيارة القادمة:-</h4>
+                <div className="content gap-3">
+                  <div className="reason" style={{ flexBasis: "200px" }}>
+                    <label htmlFor="illness">سبب الزيارة</label>
 
                   <Select
                     labelId="illness"
@@ -570,74 +596,24 @@ const PatientDetails = () => {
                     disablePast
                   />
                 </div>
-                <div className="paid-money">
-                  <label htmlFor="paidMoney">المبلغ المدفوع</label>
-                  <input
-                    type="number"
-                    id="paidMoney"
-                    className="form-control"
-                    min={0}
-                    value={patientInfo?.nextVisit?.paidUp || 0}
-                    onChange={(e) => {
-                      setpatientInfo({
-                        ...patientInfo,
-                        nextVisit: {
-                          ...patientInfo?.nextVisit,
-                          paidUp: e.currentTarget.value,
-                        },
-                        requiredMoney:
-                          patientInfo?.requiredMoney - e.currentTarget.value,
-                      });
-                    }}
-                  />
-                </div>
-                <div className="required-money">
-                  <label htmlFor="requiredMoney">إجمالى المبلغ المطلوب</label>
-                  <input
-                    type="number"
-                    id="requiredMoney"
-                    className="form-control"
-                    min={0}
-                    value={patientInfo?.requiredMoney || 0}
-                    onChange={(e) => {
-                      setpatientInfo({
-                        ...patientInfo,
-
-                        requiredMoney: e.currentTarget.value,
-                      });
-                    }}
-                  />
-                </div>
-                <div className="notes">
-                  <label htmlFor="notes">ملاحظات أخرى</label>
-                  <textarea
-                    id="notes"
-                    className="form-control"
-                    value={patientInfo?.notes || ""}
-                    onChange={(e) => {
-                      setpatientInfo({
-                        ...patientInfo,
-                        notes: e.currentTarget.value,
-                      });
-                    }}
-                  ></textarea>
-                </div>
               </div>
             </div>
             <button className="align-self-start" type="submit">
-              تعديل
+              {setBtns(inDetails, inEdit, inFillForm)}
             </button>
           </form>
         </div>
       </div>
-
       {/* //printed paper */}
       <div className="d-none printed-paper">
         <div className="container">
           <div className="header">
             <div className="logo">
               <img src={printLogo} alt="printedLogo" />
-              <h1>آراك</h1>
+              <div>
+                <h1>آراك</h1>
+                <p className="fw-bold">د. بلال شعبان الزهيري</p>
+              </div>
             </div>
             <h1 className="title">{patientInfo?.code}</h1>
           </div>
@@ -681,7 +657,7 @@ const PatientDetails = () => {
               </div>
             </div>
           </div>
-          <table className="table h-100 table table-striped table-bordered">
+          <table className="table h-100  table-bordered">
             <thead>
               <tr>
                 <th>التاريخ</th>
@@ -692,7 +668,7 @@ const PatientDetails = () => {
               </tr>
             </thead>
             <tbody>
-              {tableRows?.map((row) => (
+              {[...Array(10)].map((row) => (
                 <tr key={row}>
                   <td>
                     /&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -709,7 +685,17 @@ const PatientDetails = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default PatientDetails;
+export default PatientDetails
+
+function setBtns(inDetails, inEdit, inFillForm) {
+  if (inDetails || inEdit) {
+    return "تعديل"
+  } else if (inFillForm) {
+    return "أكمل البيانات"
+  } else {
+    return "احجز"
+  }
+}

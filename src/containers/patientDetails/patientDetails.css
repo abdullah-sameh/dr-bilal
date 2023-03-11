@@ -17,18 +17,14 @@
 
 .patient-info .editPatientInfo .main-info,
 .patient-info .editPatientInfo .next-visits .content {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+}
+.patient-info .editPatientInfo .main-info > div {
+  flex-grow: 1;
 }
 
-/* .patient-info .editPatientInfo > div,
-.patient-info .editPatientInfo .main-info > div,
-.patient-info .editPatientInfo .next-visits .content > div {
-  margin: 20px 0 20px 20px;
-} */
-
 .patient-info .editPatientInfo > div label {
-  /* margin-bottom: 10px; */
   font-size: 1.2rem;
   margin-bottom: 10px !important;
 }
@@ -145,7 +141,7 @@
   background-color: white;
 }
 
-.printed-paper .header {
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -154,18 +150,21 @@
   margin-bottom: 15px;
 }
 
-.printed-paper .header .logo {
+.logo {
   display: flex;
   align-items: center;
 }
 
-.printed-paper .header .logo img {
+.header .logo img {
   width: 90px;
   margin-left: 10px;
 }
 
-.printed-paper .header .logo h1 {
+.header .logo h1 {
   font-weight: bold;
+}
+.printed-paper .header .logo > div > p {
+  font-size: 18px;
 }
 
 .printed-paper .main-data h5 {
@@ -190,7 +189,16 @@
   height: 20px;
   text-align: center;
 }
-
+table.table-bordered {
+  border: 1px solid #000;
+  margin-top: 20px;
+}
+table.table-bordered > thead > tr > th {
+  border: 1px solid #000;
+}
+table.table-bordered > tbody > tr > td {
+  border: 1px solid #000;
+}
 @media print {
   .patient-info {
     display: none;
