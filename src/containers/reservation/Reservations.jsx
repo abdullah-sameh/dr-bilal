@@ -1,23 +1,23 @@
-import dayjs from "dayjs";
-import { doc, setDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, Route, Routes } from "react-router-dom";
-import Swal from "sweetalert2";
-import Navbar from "../../components/navbar/Navbar";
-import { db } from "../../firebase";
-import { getAllPatients } from "../../rtk/slices/allPatientsSlice";
-import { getStatistics } from "../../rtk/slices/statistcsSlice";
-import PatientDetails from "../patientDetails/PatientDetails";
-import "./reservation.css";
+import dayjs from "dayjs"
+import { doc, setDoc } from "firebase/firestore"
+import { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { Link, Route, Routes } from "react-router-dom"
+import Swal from "sweetalert2"
+import Navbar from "../../components/navbar/Navbar"
+import { db } from "../../firebase"
+import { getAllPatients } from "../../rtk/slices/allPatientsSlice"
+import { getStatistics } from "../../rtk/slices/statistcsSlice"
+import PatientDetails from "../patientDetails/PatientDetails"
+import "./reservation.css"
 
 export default function Reservation() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
-  const [time, setTime] = useState("all");
-  const [showedPatients, setShowedPatients] = useState();
-  const allPatients = useSelector((state) => state.allPatients);
-  const statistics = useSelector((state) => state?.statistics);
+  const [time, setTime] = useState("all")
+  const [showedPatients, setShowedPatients] = useState()
+  const allPatients = useSelector((state) => state.allPatients)
+  const statistics = useSelector((state) => state?.statistics)
   const weekDays = [
     "الأحد",
     "الإثنين",
@@ -26,10 +26,10 @@ export default function Reservation() {
     "الخميس",
     "الجمعة",
     "السبت",
-  ];
+  ]
 
   const timeFilterHandler = () => {
-    let currentDt = new Date();
+    let currentDt = new Date()
 
     switch (time) {
       case "all":
@@ -38,8 +38,8 @@ export default function Reservation() {
           allPatients?.filter(
             (patient) => Object.keys(patient?.data?.nextVisit).length !== 0
           )
-        );
-        break;
+        )
+        break
 
       case "day":
         //get all people have appointments today
@@ -57,66 +57,66 @@ export default function Reservation() {
                   : currentDt.getDate()
               }`
           )
-        );
-        break;
+        )
+        break
 
       case "week":
-        let startDt = new Date(currentDt.getFullYear(), 0, 1);
+        let startDt = new Date(currentDt.getFullYear(), 0, 1)
 
         //get current week number
         let currentDays = Math.floor(
           (currentDt - startDt) / (24 * 60 * 60 * 1000)
-        );
-        let currentWeekNumber = Math.ceil(currentDays / 7);
+        )
+        let currentWeekNumber = Math.ceil(currentDays / 7)
 
         //get all people have appointments this week
         setShowedPatients(
           allPatients.filter((patient) => {
             //get patient appointment week
-            let patientDt = new Date(patient?.data?.nextVisit?.visitDate);
+            let patientDt = new Date(patient?.data?.nextVisit?.visitDate)
             let patientDays = Math.floor(
               (patientDt - startDt) / (24 * 60 * 60 * 1000)
-            );
-            let patientWeekNumber = Math.ceil(patientDays / 7);
+            )
+            let patientWeekNumber = Math.ceil(patientDays / 7)
 
-            return currentWeekNumber === patientWeekNumber && patient;
+            return currentWeekNumber === patientWeekNumber && patient
           })
-        );
-        break;
+        )
+        break
 
       case "month":
         setShowedPatients(
           allPatients?.filter((patient) => {
-            let patientDt = new Date(patient?.data?.nextVisit.visitDate);
+            let patientDt = new Date(patient?.data?.nextVisit.visitDate)
 
             if (
               patientDt.getFullYear() === currentDt.getFullYear() &&
               patientDt.getMonth() === currentDt.getMonth()
             )
-              return patient;
+              return patient
           })
-        );
-        break;
+        )
+        break
 
       default:
-        break;
+        break
     }
-  };
+  }
 
   useEffect(() => {
-    dispatch(getAllPatients());
-    dispatch(getStatistics());
+    dispatch(getAllPatients())
+    dispatch(getStatistics())
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [])
 
   useEffect(() => {
-    timeFilterHandler();
-  }, [allPatients]);
+    timeFilterHandler()
+  }, [allPatients])
 
   useEffect(() => {
-    timeFilterHandler();
+    timeFilterHandler()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [time]);
+  }, [time])
 
   const attendHandler = async (patient) => {
     await setDoc(doc(db, "patients", patient?.id), {
@@ -130,26 +130,26 @@ export default function Reservation() {
       .then(() => {
         if (patient?.data?.nextVisit?.firstTime) {
           //get the old statistics data for this illness
-          let dt = new Date();
+          let dt = new Date()
 
           //get the object of illness
           let [illnessData] = statistics?.illnesses?.filter((illness) =>
             illness?.name.includes(patient?.data?.nextVisit?.reason)
-          );
+          )
 
           //get the index of illness object
-          let indexOfIllness = statistics?.illnesses?.indexOf(illnessData);
-          let allIllnesses = [...statistics?.illnesses];
+          let indexOfIllness = statistics?.illnesses?.indexOf(illnessData)
+          let allIllnesses = [...statistics?.illnesses]
 
           //update month statistics for this illness
-          let newData = [...allIllnesses[indexOfIllness]?.data];
-          newData[dt.getMonth()] = newData[dt.getMonth()] + 1;
+          let newData = [...allIllnesses[indexOfIllness]?.data]
+          newData[dt.getMonth()] = newData[dt.getMonth()] + 1
 
           // update illness object in illnesses array
           allIllnesses[indexOfIllness] = {
             name: allIllnesses[indexOfIllness]?.name,
             data: newData,
-          };
+          }
 
           //send new statistics
           setDoc(doc(db, "statistics", `${dt.getFullYear()}`), {
@@ -157,45 +157,45 @@ export default function Reservation() {
             year: `${dt.getFullYear()}`,
           })
             .then(() => {
-              dispatch(getAllPatients());
-              dispatch(getStatistics());
+              dispatch(getAllPatients())
+              dispatch(getStatistics())
               Swal.fire({
                 position: "center",
                 icon: "success",
                 title: `لقد تم تسجيل حضور ${patient?.data?.name} بنجاح`,
                 showConfirmButton: false,
                 timer: 1500,
-              });
+              })
             })
             .catch((e) => {
-              console.log(e.message);
+              console.log(e.message)
               Swal.fire({
                 icon: "error",
                 title: "خطأ",
                 text: "حاول مرة أخرى!",
-              });
-            });
+              })
+            })
         } else {
-          dispatch(getAllPatients());
-          setTime(time);
+          dispatch(getAllPatients())
+          setTime(time)
           Swal.fire({
             position: "center",
             icon: "success",
             title: `لقد تم تسجيل حضور ${patient?.data?.name} بنجاح`,
             showConfirmButton: false,
             timer: 1500,
-          });
+          })
         }
       })
       .catch((e) => {
-        console.log(e.message);
+        console.log(e.message)
         Swal.fire({
           icon: "error",
           title: "خطأ",
           text: "حاول مرة أخرى!",
-        });
-      });
-  };
+        })
+      })
+  }
 
   const notattendHandler = async (patient) => {
     await setDoc(doc(db, "patients", patient?.id), {
@@ -209,17 +209,17 @@ export default function Reservation() {
           title: `لقد تم الغاء الموعد`,
           showConfirmButton: false,
           timer: 1500,
-        });
+        })
       })
       .catch((e) => {
-        console.log(e.message);
+        console.log(e.message)
         Swal.fire({
           icon: "error",
           title: "خطأ",
           text: "حاول مرة أخرى!",
-        });
-      });
-  };
+        })
+      })
+  }
   return (
     <>
       <Navbar />
@@ -270,18 +270,21 @@ export default function Reservation() {
                       )
                     )
                     .format("h:mm a")}
-                  {/* <div className="d-flex justify-content-center align-items-center">
-                    <input
-                      type="time"
-                      className="border border-0 px-1 text-center m-0 bg-light"
-                      value={patient?.data?.nextVisit?.visitTime}
-                      disabled
-                    />
-                  </div> */}
                 </td>
                 <td>
-                  <Link className="btn btn-primary mx-1" to={`/${patient?.id}`}>
-                    أكمل البيانات
+                  {patient?.data?.previousVisits?.length === 0 && (
+                    <Link
+                      className="btn btn-primary mx-1"
+                      to={`/reservations/fillForm/${patient?.id}`}
+                    >
+                      أكمل البيانات
+                    </Link>
+                  )}
+                  <Link
+                    className="btn btn-info mx-1"
+                    to={`/reservations/editDate/${patient?.id}`}
+                  >
+                    تعديل الموعد
                   </Link>
                   <button
                     onClick={() => attendHandler(patient)}
@@ -302,5 +305,5 @@ export default function Reservation() {
         </table>
       </div>
     </>
-  );
+  )
 }
