@@ -30,6 +30,31 @@
 .patient-info .editPatientInfo > div label {
   /* margin-bottom: 10px; */
   font-size: 1.2rem;
+  margin-bottom: 10px !important;
+}
+
+.patient-info .editPatientInfo .notes {
+  width: 435px;
+  height: 200px;
+  margin-bottom: 40px;
+}
+
+.patient-info .editPatientInfo .notes textarea {
+  width: 100%;
+  height: 100% !important;
+  resize: none;
+}
+
+@media (max-width: 991px) {
+  .patient-info .editPatientInfo .notes {
+    width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .patient-info .editPatientInfo .notes {
+    width: 100%;
+  }
 }
 
 .patient-info .editPatientInfo .marital-status .status-container,

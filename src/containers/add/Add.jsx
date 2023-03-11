@@ -1,29 +1,29 @@
-import "./add.css"
-import Navbar from "../../components/navbar/Navbar"
-import { useNavigate } from "react-router-dom"
-import { DatePicker } from "@mui/x-date-pickers/DatePicker"
+import "./add.css";
+import Navbar from "../../components/navbar/Navbar";
+import { useNavigate } from "react-router-dom";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 // import { useReducer } from "react";
 // import { next, undo } from "../../components/tools";
-import { useDispatch } from "react-redux"
-import { useEffect, useState } from "react"
-import { onAuthStateChanged } from "firebase/auth"
-import { auth, db } from "../../firebase"
-import { setUser } from "../../rtk/slices/userSlice"
-import { motion } from "framer-motion"
-import { addDoc, collection, getDoc, doc, setDoc } from "firebase/firestore"
-import Swal from "sweetalert2"
-import Select from "react-select"
-import { MobileTimePicker } from "@mui/x-date-pickers"
-import dayjs from "dayjs"
+import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth, db } from "../../firebase";
+import { setUser } from "../../rtk/slices/userSlice";
+import { motion } from "framer-motion";
+import { addDoc, collection, getDoc, doc, setDoc } from "firebase/firestore";
+import Swal from "sweetalert2";
+import Select from "react-select";
+import { MobileTimePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 
 export default function Add() {
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const [selectedDate, setSelectedDate] = useState(dayjs())
-  const [selectedTime, setSelectedTime] = useState(dayjs())
-  const [visitReason, setVisitReason] = useState()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [selectedDate, setSelectedDate] = useState(dayjs());
+  const [selectedTime, setSelectedTime] = useState(dayjs());
+  const [visitReason, setVisitReason] = useState();
 
-  const [whatsCheck, setWhatsCheck] = useState([false, ''])
+  const [whatsCheck, setWhatsCheck] = useState([false, ""]);
   const weekDays = [
     "الأحد",
     "الإثنين",
@@ -32,7 +32,7 @@ export default function Add() {
     "الخميس",
     "الجمعة",
     "السبت",
-  ]
+  ];
   const services = [
     { value: "كشف", label: "كشف" },
     { value: "أشعة عادية", label: "أشعة عادية" },
@@ -50,22 +50,22 @@ export default function Add() {
     { value: "تبييض", label: "تبييض" },
     { value: "علاج", label: "علاج" },
     { value: "تقويم", label: "تقويم" },
-  ]
+  ];
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        dispatch(setUser(user))
+        dispatch(setUser(user));
       } else {
-        navigate("/")
+        navigate("/");
       }
-    })
+    });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   const handlePatientData = async (e) => {
-    e.preventDefault()
-    let formData = e.target
+    e.preventDefault();
+    let formData = e.target;
     // get all aptient data
     let patient = {
       name: formData?.patientName?.value,
@@ -92,14 +92,19 @@ export default function Add() {
         formData?.illness?.value !== ""
           ? {
               reason: visitReason.value,
-              visitTime: `${selectedTime.get("hour")}:${selectedTime.get('minute')}`,
+              visitTime: `${selectedTime.get("hour")}:${selectedTime.get(
+                "minute"
+              )}`,
               visitDate: selectedDate?.format("YYYY-MM-DD"),
               firstTime: true,
+              paidUp: 0,
             }
           : {},
       opinion: formData?.patientOpinion?.value,
-    }
-    
+      requiredMoney: 0,
+      notes: "",
+    };
+
     Swal.fire({
       title: "هل أنت متأكد؟",
       text: `من أنك تريد حجز موعد ل ${formData?.patientName?.value}`,
@@ -115,7 +120,7 @@ export default function Add() {
         */
         await getDoc(doc(db, "patients", "patientsCode"))
           .then((docu) => {
-            let dt = new Date()
+            let dt = new Date();
 
             addDoc(collection(db, "patients"), {
               ...patient,
@@ -130,40 +135,40 @@ export default function Add() {
                   title: `لقد تم تسجيل ${formData.patientName.value} بنجاح`,
                   showConfirmButton: false,
                   timer: 1500,
-                })
+                });
                 setDoc(doc(db, "patients", "patientsCode"), {
                   currentNumber: docu.data().currentNumber + 1,
                 })
                   .then(() => document.querySelector(".addNewPatient").reset())
                   .catch((e) => {
-                    console.log(e.message)
+                    console.log(e.message);
                     Swal.fire({
                       icon: "error",
                       title: "خطأ",
                       text: "حاول مرة أخرى!",
-                    })
-                  })
+                    });
+                  });
               })
               .catch((e) => {
-                console.log(e.message)
+                console.log(e.message);
                 Swal.fire({
                   icon: "error",
                   title: "خطأ",
                   text: "حاول مرة أخرى!",
-                })
-              })
+                });
+              });
           })
           .catch((e) => {
-            console.log(e.message)
+            console.log(e.message);
             Swal.fire({
               icon: "error",
               title: "خطأ",
               text: "حاول مرة أخرى!",
-            })
-          })
+            });
+          });
       }
-    })
-  }
+    });
+  };
 
   return (
     <>
@@ -245,7 +250,7 @@ export default function Add() {
                   onChange={() =>
                     whatsCheck[0]
                       ? setWhatsCheck([false, ""])
-                      : setWhatsCheck([true, 'animate__rubberBand'])
+                      : setWhatsCheck([true, "animate__rubberBand"])
                   }
                 />
               </div>
@@ -406,33 +411,6 @@ export default function Add() {
                     value={visitReason}
                     onChange={(reason) => setVisitReason(reason)}
                   />
-                  {/* <select
-                    className="form-control w-auto"
-                    name="illness"
-                    id="illness"
-                    </option>
-                  >
-                    <option value="" disabled>
-                      ---اختر---
-                    </option>
-                    <option value="أشعة عادية">أشعة عادية</option>
-                    <option value="حشو بلاتين">حشو بلاتين</option>
-                    <option value="حشو كمبوزت">حشو كمبوزت</option>
-                    <option value="حشو عصب">حشو عصب</option>
-                    <option value="حشو عادى أطفال">حشو عادى أطفال</option>
-                    <option value="حشو عصب أطفال">حشو عصب أطفال</option>
-                    <option value="طاقم متحرك">طاقم متحرك</option>
-                    <option value="زراعة">زراعة</option>
-                    <option value="خلع عادي">خلع عادي</option>
-                    <option value="خلع ضرس عقل">خلع ضرس عقل</option>
-                    <option value="خلع ضرس عقل مدفون">خلع ضرس عقل مدفون</option>
-                    <option value="طربوش">طربوش</option>
-                    <option value="كوبري">كوبري</option>
-                    <option value="تنظيف جير">تنظيف جير</option>
-                    <option value="تلميع">تلميع</option>
-                    <option value="تبييض">تبييض</option>
-                    <option value="علاج">علاج</option>
-                  </select> */}
                 </div>
                 <div className="visit-date">
                   <label htmlFor="visitDate">تاريخ الزيارة</label>
@@ -469,10 +447,20 @@ export default function Add() {
                 </div>
               </div>
             </div>
+            <div className="notes">
+              <div className="notes">
+                <label htmlFor="notes">ملاحظات أخرى</label>
+                <textarea
+                  id="notes"
+                  className="form-control"
+                  name="notes"
+                ></textarea>
+              </div>
+            </div>
             <button type="submit">تسجيل</button>
           </form>
         </div>
       </div>
     </>
-  )
+  );
 }

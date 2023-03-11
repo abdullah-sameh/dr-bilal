@@ -95,7 +95,7 @@ const PatientDetails = () => {
               showConfirmButton: false,
               timer: 1500,
             });
-            navigate("/");
+            navigate(-1);
           })
           .catch((e) => {
             console.log(e.message);
@@ -460,6 +460,7 @@ const PatientDetails = () => {
                       <td>السبب</td>
                       <td>التاريخ</td>
                       <td>الموعد</td>
+                      <td>المبلغ المدفوع</td>
                     </tr>
                   </thead>
                   <tbody>
@@ -476,6 +477,7 @@ const PatientDetails = () => {
                             .minute(parseInt(visit?.visitTime?.split(":")[1]))
                             .format("hh:mm A")}
                         </td>
+                        <td>{visit?.paidUp}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -568,6 +570,58 @@ const PatientDetails = () => {
                     disablePast
                   />
                 </div>
+                <div className="paid-money">
+                  <label htmlFor="paidMoney">المبلغ المدفوع</label>
+                  <input
+                    type="number"
+                    id="paidMoney"
+                    className="form-control"
+                    min={0}
+                    value={patientInfo?.nextVisit?.paidUp || 0}
+                    onChange={(e) => {
+                      setpatientInfo({
+                        ...patientInfo,
+                        nextVisit: {
+                          ...patientInfo?.nextVisit,
+                          paidUp: e.currentTarget.value,
+                        },
+                        requiredMoney:
+                          patientInfo?.requiredMoney - e.currentTarget.value,
+                      });
+                    }}
+                  />
+                </div>
+                <div className="required-money">
+                  <label htmlFor="requiredMoney">إجمالى المبلغ المطلوب</label>
+                  <input
+                    type="number"
+                    id="requiredMoney"
+                    className="form-control"
+                    min={0}
+                    value={patientInfo?.requiredMoney || 0}
+                    onChange={(e) => {
+                      setpatientInfo({
+                        ...patientInfo,
+
+                        requiredMoney: e.currentTarget.value,
+                      });
+                    }}
+                  />
+                </div>
+                <div className="notes">
+                  <label htmlFor="notes">ملاحظات أخرى</label>
+                  <textarea
+                    id="notes"
+                    className="form-control"
+                    value={patientInfo?.notes || ""}
+                    onChange={(e) => {
+                      setpatientInfo({
+                        ...patientInfo,
+                        notes: e.currentTarget.value,
+                      });
+                    }}
+                  ></textarea>
+                </div>
               </div>
             </div>
             <button className="align-self-start" type="submit">
@@ -576,6 +630,7 @@ const PatientDetails = () => {
           </form>
         </div>
       </div>
+
       {/* //printed paper */}
       <div className="d-none printed-paper">
         <div className="container">
