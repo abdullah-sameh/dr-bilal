@@ -2,8 +2,6 @@ import "./add.css";
 import Navbar from "../../components/navbar/Navbar";
 import { useNavigate } from "react-router-dom";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-// import { useReducer } from "react";
-// import { next, undo } from "../../components/tools";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
@@ -96,11 +94,15 @@ export default function Add() {
               )}`,
               visitDate: selectedDate?.format("YYYY-MM-DD"),
               firstTime: true,
-              paidUp: 0,
+              paidUp:
+                formData?.paidUp.value !== "" ? formData?.paidUp.value : 0,
             }
           : {},
       opinion: formData?.patientOpinion?.value,
-      requiredMoney: 0,
+      requiredMoney:
+        formData?.paidUp.value !== ""
+          ? formData?.requiredMoney.value - formData?.paidUp.value
+          : formData?.requiredMoney.value,
     };
 
     Swal.fire({
@@ -123,7 +125,7 @@ export default function Add() {
             addDoc(collection(db, "patients"), {
               ...patient,
               code: `${dt.getFullYear().toString().substr(2)}${
-                docu.data().currentNumber + 1
+                parseInt(docu.data().currentNumber) + 1
               }`,
             })
               .then(() => {
@@ -391,6 +393,24 @@ export default function Add() {
                         helperText: "HH:MM aa",
                       },
                     }}
+                  />
+                </div>
+                <div className="paid-up">
+                  <label htmlFor="paidUp">المبلغ المدفوع</label>
+                  <input
+                    type="number"
+                    name="paidUp"
+                    id="paidUp"
+                    className="form-control"
+                  />
+                </div>
+                <div className="required-money">
+                  <label htmlFor="requiredMoney">المبلغ المطلوب دفعه</label>
+                  <input
+                    type="number"
+                    id="requiredMoney"
+                    name="requiredMoney"
+                    className="form-control"
                   />
                 </div>
               </div>
