@@ -125,7 +125,7 @@ export default function Add() {
             addDoc(collection(db, "patients"), {
               ...patient,
               code: `${dt.getFullYear().toString().substr(2)}${
-                parseInt(docu.data().currentNumber) + 1
+                docu.data().currentNumber + 1
               }`,
             })
               .then(() => {
@@ -137,7 +137,7 @@ export default function Add() {
                   timer: 1500,
                 });
                 setDoc(doc(db, "patients", "patientsCode"), {
-                  currentNumber: parseInt(docu.data().currentNumber) + 1,
+                  currentNumber: docu.data().currentNumber + 1,
                 })
                   .then(() => document.querySelector(".addNewPatient").reset())
                   .catch((e) => {
@@ -401,6 +401,7 @@ export default function Add() {
                     type="number"
                     name="paidUp"
                     id="paidUp"
+                    min={0}
                     className="form-control"
                   />
                 </div>
@@ -410,6 +411,7 @@ export default function Add() {
                     type="number"
                     id="requiredMoney"
                     name="requiredMoney"
+                    min={0}
                     className="form-control"
                   />
                 </div>
