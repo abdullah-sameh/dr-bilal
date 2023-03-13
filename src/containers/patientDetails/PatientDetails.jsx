@@ -94,7 +94,12 @@ const PatientDetails = () => {
     }).then(async (result) => {
       /*Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
-        await setDoc(doc(db, "patients", patientId), patientInfo)
+        console.log(patientInfo);
+        await setDoc(doc(db, "patients", patientId), {
+          ...patientInfo,
+          requiredMoney:
+            patientInfo?.requiredMoney - patientInfo?.nextVisit?.paidUp,
+        })
           .then(() => {
             dispatch(getPatientById(patientId));
             Swal.fire({
@@ -513,100 +518,100 @@ const PatientDetails = () => {
                 </table>
               </div>
             )}
-            {inEdit && (
+            {(!newBook || inEdit) && (
               <div className="next-visits">
                 <h4 className="title">الزيارة القادمة:-</h4>
                 <div className="content gap-3">
                   <div className="reason" style={{ flexBasis: "200px" }}>
                     <label htmlFor="illness">سبب الزيارة</label>
 
-                    <Select
-                      labelId="illness"
-                      id="demo-controlled-open-select"
-                      value={
-                        {
-                          value: patientInfo?.nextVisit?.reason,
-                          label: patientInfo?.nextVisit?.reason,
-                        } || "بتنجان مخلل"
-                      }
-                      onChange={(e) => {
-                        setpatientInfo({
-                          ...patientInfo,
-                          nextVisit: {
-                            ...patientInfo?.nextVisit,
-                            reason: e.value,
-                          },
-                        });
-                      }}
-                      options={services}
-                    />
-                  </div>
-                  <div className="visit-time">
-                    <label htmlFor="visitTime">موعد الزيارة</label>
-                    <MobileTimePicker
-                      className="form-control w-auto"
-                      id="visitTime"
-                      name="visitTime"
-                      views={["hours", "minutes"]}
-                      value={timeVisit}
-                      onChange={(time) => {
-                        setTimeVisit(time);
-                        setpatientInfo({
-                          ...patientInfo,
-                          nextVisit: {
-                            ...patientInfo?.nextVisit,
-                            visitTime: `${time.get("hour")}:${time.get(
-                              "minute"
-                            )}`,
-                          },
-                        });
-                      }}
-                      slotProps={{
-                        textField: {
-                          helperText: "HH:MM aa",
+                  <Select
+                    labelId="illness"
+                    id="demo-controlled-open-select"
+                    value={
+                      {
+                        value: patientInfo?.nextVisit?.reason,
+                        label: patientInfo?.nextVisit?.reason,
+                      } || "بتنجان مخلل"
+                    }
+                    onChange={(e) => {
+                      setpatientInfo({
+                        ...patientInfo,
+                        nextVisit: {
+                          ...patientInfo?.nextVisit,
+                          reason: e.value,
                         },
-                      }}
-                    />
-                  </div>
-                  <div className="visit-date">
-                    <label htmlFor="visitDate">تاريخ الزيارة</label>
-                    <DatePicker
-                      id="visitDate"
-                      name="visitDate"
-                      value={dayjs(patientInfo?.nextVisit?.visitDate)}
-                      onChange={(date) =>
-                        setpatientInfo({
-                          ...patientInfo,
-                          nextVisit: {
-                            ...patientInfo?.nextVisit,
-                            visitDate: date.format("YYYY-MM-DD"),
-                          },
-                        })
-                      }
-                      views={["year", "month", "day"]}
-                      openTo="month"
-                      format="DD/MM/YYYY"
-                      slotProps={{
-                        textField: {
-                          helperText:
-                            "DD / MM / YYYY -- " +
-                            weekDays[
-                              dayjs(patientInfo?.nextVisit?.visitDate)?.day()
-                            ],
+                      });
+                    }}
+                    options={services}
+                  />
+                </div>
+                <div className="visit-time">
+                  <label htmlFor="visitTime">موعد الزيارة</label>
+                  <MobileTimePicker
+                    className="form-control w-auto"
+                    id="visitTime"
+                    name="visitTime"
+                    views={["hours", "minutes"]}
+                    value={timeVisit}
+                    onChange={(time) => {
+                      setTimeVisit(time);
+                      setpatientInfo({
+                        ...patientInfo,
+                        nextVisit: {
+                          ...patientInfo?.nextVisit,
+                          visitTime: `${time.get("hour")}:${time.get(
+                            "minute"
+                          )}`,
                         },
-                      }}
-                      disablePast
-                    />
-                  </div>
+                      });
+                    }}
+                    slotProps={{
+                      textField: {
+                        helperText: "HH:MM aa",
+                      },
+                    }}
+                  />
+                </div>
+                <div className="visit-date">
+                  <label htmlFor="visitDate">تاريخ الزيارة</label>
+                  <DatePicker
+                    id="visitDate"
+                    name="visitDate"
+                    value={dayjs(patientInfo?.nextVisit?.visitDate)}
+                    onChange={(date) =>
+                      setpatientInfo({
+                        ...patientInfo,
+                        nextVisit: {
+                          ...patientInfo?.nextVisit,
+                          visitDate: date.format("YYYY-MM-DD"),
+                        },
+                      })
+                    }
+                    views={["year", "month", "day"]}
+                    openTo="month"
+                    format="DD/MM/YYYY"
+                    slotProps={{
+                      textField: {
+                        helperText:
+                          "DD / MM / YYYY -- " +
+                          weekDays[
+                            dayjs(patientInfo?.nextVisit?.visitDate)?.day()
+                          ],
+                      },
+                    }}
+                    disablePast
+                  />
                 </div>
               </div>
-            )}
+            </div>
             <button className="align-self-start" type="submit">
               {setBtns(inDetails, inEdit, inFillForm)}
             </button>
           </form>
         </div>
       </div>
+
       {/* //printed paper */}
       <div className="d-none printed-paper">
         <div className="container">
@@ -671,8 +676,8 @@ const PatientDetails = () => {
               </tr>
             </thead>
             <tbody>
-              {[...Array(10)].map((row) => (
-                <tr key={row}>
+              {[...Array(10)].map((row, index) => (
+                <tr key={index}>
                   <td>
                     /&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     /
