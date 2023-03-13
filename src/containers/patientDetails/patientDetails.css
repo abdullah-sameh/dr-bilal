@@ -87,7 +87,9 @@
   -ms-transition: all 0.2s ease-in-out;
   -o-transition: all 0.2s ease-in-out;
 }
-
+.patient-info .editPatientInfo button.print {
+  background-color: green;
+}
 .patient-info .editPatientInfo button:hover {
   transform: scale(1.1);
   -webkit-transform: scale(1.1);
