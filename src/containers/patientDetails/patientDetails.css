@@ -27,6 +27,22 @@
   margin: 20px 0 20px 20px;
 } */
 
+.patient-info .editPatientInfo .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.patient-info .editPatientInfo .header .logo {
+  display: flex;
+  align-items: center;
+}
+
+.patient-info .editPatientInfo .header .logo img {
+  width: 100px;
+  margin-left: 10px;
+}
+
 .patient-info .editPatientInfo > div label {
   /* margin-bottom: 10px; */
   font-size: 1.2rem;

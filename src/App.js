@@ -18,14 +18,20 @@ export default function App() {
         <Route path="/" element={<Login />} />
         <Route path="/home" element={<Home />} />
         <Route path="/add" element={<Add />} />
-        <Route path="/data" element={<Data />} />
+        <Route path="/data/*" element={<Data />} />
         <Route path="/reservations" element={<Reservation />} />
-        <Route path="/reservations/fillForm/:patientId" element={<PatientDetails />} />
-        <Route path="/reservations/editDate/:patientId" element={<PatientDetails />} />
+        <Route
+          path="/reservations/fillForm/:patientId"
+          element={<PatientDetails />}
+        />
+        <Route
+          path="/reservations/editDate/:patientId"
+          element={<PatientDetails />}
+        />
         <Route path="/data/:patientId" element={<PatientDetails />} />
         <Route path="/data/details/:patientId" element={<PatientDetails />} />
         <Route path="/data/newBook/:patientId" element={<PatientDetails />} />
       </Routes>
     </LocalizationProvider>
-  )
+  );
 }
