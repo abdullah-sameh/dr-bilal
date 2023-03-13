@@ -602,6 +602,26 @@ const PatientDetails = () => {
                       disablePast
                     />
                   </div>
+                  <div className="first-time">
+                    <input
+                      type="checkbox"
+                      value={patientInfo?.nextVisit?.firstTime || false}
+                      onChange={(e) =>
+                        setpatientInfo({
+                          ...patientInfo,
+                          nextVisit: {
+                            ...patientInfo?.nextVisit,
+                            firstTime: e.currentTarget.checked,
+                          },
+                        })
+                      }
+                      name="firstTime"
+                      id="firstTime"
+                    />
+                    <label htmlFor="firstTime">
+                      هل هذه أول مرة لنفس المرض؟
+                    </label>
+                  </div>
                   <div className="paid-up">
                     <label htmlFor="paidUp">المبلغ المدفوع</label>
                     <input
@@ -682,9 +702,9 @@ const PatientDetails = () => {
                   <></>
                 )}
                 <h5 className="job">الوظيفة: {patientInfo?.job}</h5>
-                {patientInfo?.surgeryOperations && (
+                {patientInfo?.previousSurgeryOperations && (
                   <h5 className="operations">
-                    العمليات: {patientInfo?.surgeryOperations.join("-")}
+                    العمليات: {patientInfo?.previousSurgeryOperations.join("-")}
                   </h5>
                 )}
                 {patientInfo?.allergy && (

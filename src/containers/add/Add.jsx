@@ -137,7 +137,7 @@ export default function Add() {
                   timer: 1500,
                 });
                 setDoc(doc(db, "patients", "patientsCode"), {
-                  currentNumber: docu.data().currentNumber + 1,
+                  currentNumber: parseInt(docu.data().currentNumber) + 1,
                 })
                   .then(() => document.querySelector(".addNewPatient").reset())
                   .catch((e) => {
