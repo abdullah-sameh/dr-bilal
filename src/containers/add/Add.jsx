@@ -100,6 +100,7 @@ export default function Add() {
             }
           : {},
       opinion: formData?.patientOpinion?.value,
+      requiredMoney: 0,
     };
 
     Swal.fire({

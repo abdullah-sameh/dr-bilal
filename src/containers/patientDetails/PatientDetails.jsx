@@ -94,7 +94,7 @@ const PatientDetails = () => {
     }).then(async (result) => {
       /*Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
-        console.log(patientInfo)
+        console.log(patientInfo);
         await setDoc(doc(db, "patients", patientId), {
           ...patientInfo,
           requiredMoney:
@@ -611,13 +611,12 @@ const PatientDetails = () => {
                       type="number"
                       id="paidUp"
                       className="form-control"
-                      min={0}
                       onChange={(e) => {
                         setpatientInfo({
                           ...patientInfo,
                           nextVisit: {
                             ...patientInfo?.nextVisit,
-                            paidUp: parseInt(e.currentTarget.value),
+                            paidUp: e.currentTarget.value,
                           },
                         })
                       }}
@@ -629,13 +628,12 @@ const PatientDetails = () => {
                       type="number"
                       id="requiredMoney"
                       className="form-control"
-                      min={0}
                       value={patientInfo?.requiredMoney || 0}
                       onChange={(e) => {
                         setpatientInfo({
                           ...patientInfo,
                           requiredMoney: parseInt(e.currentTarget.value),
-                        })
+                        });
                       }}
                     />
                   </div>
@@ -696,6 +694,29 @@ const PatientDetails = () => {
                   <></>
                 )}
                 <h5 className="job">الوظيفة: {patientInfo?.job}</h5>
+                {patientInfo?.surgeryOperations && (
+                  <h5 className="operations">
+                    العمليات: {patientInfo?.surgeryOperations.join("-")}
+                  </h5>
+                )}
+                {patientInfo?.allergy && (
+                  <h5 className="allergy">
+                    حساسية من: {patientInfo?.allergy.join("-")}
+                  </h5>
+                )}
+                <h5 className="marital-status">
+                  الحالة الاجتماعية:{" "}
+                  {patientInfo?.maritalStatus === "unmarried"
+                    ? "أعزب"
+                    : "متزوج"}
+                </h5>
+
+                {(patientInfo?.pregnant || patientInfo?.breastfeeding) && (
+                  <h5>
+                    {patientInfo?.pregnant && "حامل"}
+                    {patientInfo?.breastfeeding && `--مرضعة}`}
+                  </h5>
+                )}
               </div>
               <div className="col-6">
                 <div className="mouth">
