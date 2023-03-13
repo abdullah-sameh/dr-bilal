@@ -1,34 +1,34 @@
-import Select from "react-select"
-import { DatePicker, MobileTimePicker } from "@mui/x-date-pickers"
-import dayjs from "dayjs"
-import { onAuthStateChanged } from "firebase/auth"
-import { doc, setDoc } from "firebase/firestore"
-import React, { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { useHref, useNavigate, useParams } from "react-router-dom"
-import printLogo from "../../assets/colored_logo.png"
-import adultMouth from "../../assets/adult_mouth.jpg"
-import kidsMouth from "../../assets/kids_mouth.jpg"
-import Swal from "sweetalert2"
-import { auth, db } from "../../firebase"
-import { getPatientById } from "../../rtk/slices/patientSlice"
-import { setUser } from "../../rtk/slices/userSlice"
-import "./patientDetails.css"
+import Select from "react-select";
+import { DatePicker, MobileTimePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHref, useNavigate, useParams } from "react-router-dom";
+import printLogo from "../../assets/colored_logo.png";
+import adultMouth from "../../assets/adult_mouth.jpg";
+import kidsMouth from "../../assets/kids_mouth.jpg";
+import Swal from "sweetalert2";
+import { auth, db } from "../../firebase";
+import { getPatientById } from "../../rtk/slices/patientSlice";
+import { setUser } from "../../rtk/slices/userSlice";
+import "./patientDetails.css";
 
 const PatientDetails = () => {
-  const { patientId } = useParams()
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const url = useHref()
+  const { patientId } = useParams();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const url = useHref();
 
-  const patient = useSelector((state) => state.patientById)
-  const [timeVisit, setTimeVisit] = useState(dayjs("none"))
-  const [birthDate, setBirthDate] = useState(dayjs("none"))
-  const [newBook, setNewBook] = useState(false)
-  const [inDetails, setInDetails] = useState(false)
-  const [inFillForm, setInFillForm] = useState(false)
-  const [inEdit, setInEdit] = useState(false)
-  const [patientInfo, setpatientInfo] = useState({})
+  const patient = useSelector((state) => state.patientById);
+  const [timeVisit, setTimeVisit] = useState(dayjs("none"));
+  const [birthDate, setBirthDate] = useState(dayjs("none"));
+  const [newBook, setNewBook] = useState(false);
+  const [inDetails, setInDetails] = useState(false);
+  const [inFillForm, setInFillForm] = useState(false);
+  const [inEdit, setInEdit] = useState(false);
+  const [patientInfo, setpatientInfo] = useState({});
   const weekDays = [
     "الأحد",
     "الإثنين",
@@ -37,7 +37,7 @@ const PatientDetails = () => {
     "الخميس",
     "الجمعة",
     "السبت",
-  ]
+  ];
   const services = [
     { value: "كشف", label: "كشف" },
     { value: "أشعة عادية", label: "أشعة عادية" },
@@ -55,36 +55,36 @@ const PatientDetails = () => {
     { value: "تبييض", label: "تبييض" },
     { value: "علاج", label: "علاج" },
     { value: "تقويم", label: "تقويم" },
-  ]
+  ];
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        dispatch(setUser(user))
+        dispatch(setUser(user));
       } else {
-        navigate("/")
+        navigate("/");
       }
-    })
-    dispatch(getPatientById(patientId))
+    });
+    dispatch(getPatientById(patientId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [patientId])
+  }, [patientId]);
 
   useEffect(() => {
-    setpatientInfo(patient.data)
+    setpatientInfo(patient.data);
     setTimeVisit(
       dayjs()
         .hour(+patient?.data?.nextVisit?.visitTime?.split(":")[0])
         .minute(+patient?.data?.nextVisit?.visitTime?.split(":")[1])
-    )
-    setBirthDate(dayjs(patientInfo?.birthDate))
-    url.includes("newBook") ? setNewBook(false) : setNewBook(true)
-    url.includes("details") ? setInDetails(true) : setInDetails(false)
-    url.includes("fillForm") ? setInFillForm(true) : setInFillForm(false)
-    url.includes("editDate") ? setInEdit(true) : setInEdit(false)
-  }, [patient])
+    );
+    setBirthDate(dayjs(patientInfo?.birthDate));
+    url.includes("newBook") ? setNewBook(false) : setNewBook(true);
+    url.includes("details") ? setInDetails(true) : setInDetails(false);
+    url.includes("fillForm") ? setInFillForm(true) : setInFillForm(false);
+    url.includes("editDate") ? setInEdit(true) : setInEdit(false);
+  }, [patient]);
 
   const editInfo = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     Swal.fire({
       title: "هل أنت متأكد؟",
       text: `من أنك تريد تعديل بيانات ${patientInfo?.name}؟`,
@@ -94,9 +94,14 @@ const PatientDetails = () => {
     }).then(async (result) => {
       /*Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
-        await setDoc(doc(db, "patients", patientId), patientInfo)
+        console.log(patientInfo);
+        await setDoc(doc(db, "patients", patientId), {
+          ...patientInfo,
+          requiredMoney:
+            patientInfo?.requiredMoney - patientInfo?.nextVisit?.paidUp,
+        })
           .then(() => {
-            dispatch(getPatientById(patientId))
+            dispatch(getPatientById(patientId));
             Swal.fire({
               position: "center",
               icon: "success",
@@ -107,29 +112,29 @@ const PatientDetails = () => {
             navigate(-1);
           })
           .catch((e) => {
-            console.log(e.message)
+            console.log(e.message);
             Swal.fire({
               icon: "error",
               title: "خطأ",
               text: "حاول مرة أخرى!",
-            })
-          })
+            });
+          });
       }
-    })
-  }
+    });
+  };
 
   const handleMouthByAge = (birthDate) => {
-    let birthDt = new Date(birthDate)
-    let currentDt = new Date()
+    let birthDt = new Date(birthDate);
+    let currentDt = new Date();
 
-    let age = currentDt.getFullYear() - birthDt.getFullYear()
+    let age = currentDt.getFullYear() - birthDt.getFullYear();
 
     if (age >= 11) {
-      return true
+      return true;
     } else {
-      return false
+      return false;
     }
-  }
+  };
 
   return (
     <>
@@ -149,108 +154,110 @@ const PatientDetails = () => {
               </div>
               <h1 className="title">{patientInfo?.code}</h1>
             </div>
-            {!inEdit && <div className="main-info gap-3">
-              <div className="name">
-                <label htmlFor="patientName">اسم العميل</label>
-                <input
-                  type="text"
-                  name="patientName"
-                  id="patientName"
-                  className="form-control"
-                  value={patientInfo?.name || ""}
-                  onChange={(e) => {
-                    setpatientInfo({
-                      ...patientInfo,
-                      name: e.currentTarget.value,
-                    })
-                  }}
-                  required
-                />
+            {!inEdit && (
+              <div className="main-info gap-3">
+                <div className="name">
+                  <label htmlFor="patientName">اسم العميل</label>
+                  <input
+                    type="text"
+                    name="patientName"
+                    id="patientName"
+                    className="form-control"
+                    value={patientInfo?.name || ""}
+                    onChange={(e) => {
+                      setpatientInfo({
+                        ...patientInfo,
+                        name: e.currentTarget.value,
+                      });
+                    }}
+                    required
+                  />
+                </div>
+                <div className="phone">
+                  <label htmlFor="patientPhone">رقم الهاتف</label>
+                  <input
+                    type="text"
+                    name="patientPhone"
+                    id="patientPhone"
+                    className="form-control"
+                    value={patientInfo?.phone || ""}
+                    onChange={(e) => {
+                      setpatientInfo({
+                        ...patientInfo,
+                        phone: e.currentTarget.value,
+                      });
+                    }}
+                    required
+                  />
+                </div>
+                {newBook && (
+                  <>
+                    <div className="birth-date">
+                      <label htmlFor="patientBirthDate">تاريخ الميلاد</label>
+                      <DatePicker
+                        name="patientBirthDate"
+                        id="patientBirthDate"
+                        className="form-control"
+                        value={birthDate}
+                        format="DD-MM-YYYY"
+                        openTo="year"
+                        onChange={(date) => {
+                          setBirthDate(date);
+                          setpatientInfo({
+                            ...patientInfo,
+                            birthDate: date.format("YYYY/MM/DD"),
+                          });
+                        }}
+                        slotProps={{
+                          textField: {
+                            helperText:
+                              "العمر: " + // currentAge =
+                              dayjs(new Date()).diff(dayjs(birthDate), "year") +
+                              (+dayjs(new Date()).get("year") -
+                                +dayjs(birthDate).get("year") <
+                              10
+                                ? " أعوام"
+                                : " عام"),
+                          },
+                        }}
+                      />
+                    </div>
+                    <div className="job">
+                      <label htmlFor="patientJob">الوظيفة</label>
+                      <input
+                        type="text"
+                        name="patientJob"
+                        id="patientJob"
+                        className="form-control"
+                        value={patientInfo?.job || ""}
+                        onChange={(e) => {
+                          setpatientInfo({
+                            ...patientInfo,
+                            job: e.currentTarget.value,
+                          });
+                        }}
+                      />
+                    </div>
+                    <div className="adresse">
+                      <label htmlFor="patientAdresse">العنوان</label>
+                      <input
+                        type="text"
+                        name="patientAdresse"
+                        id="patientAdresse"
+                        className="form-control"
+                        value={patientInfo?.adresse || ""}
+                        onChange={(e) => {
+                          setpatientInfo({
+                            ...patientInfo,
+                            adresse: e.currentTarget.value,
+                          });
+                        }}
+                      />
+                    </div>
+                  </>
+                )}
               </div>
-              <div className="phone">
-                <label htmlFor="patientPhone">رقم الهاتف</label>
-                <input
-                  type="text"
-                  name="patientPhone"
-                  id="patientPhone"
-                  className="form-control"
-                  value={patientInfo?.phone || ""}
-                  onChange={(e) => {
-                    setpatientInfo({
-                      ...patientInfo,
-                      phone: e.currentTarget.value,
-                    })
-                  }}
-                  required
-                />
-              </div>
-              {newBook && (
-                <>
-                  <div className="birth-date">
-                    <label htmlFor="patientBirthDate">تاريخ الميلاد</label>
-                    <DatePicker
-                      name="patientBirthDate"
-                      id="patientBirthDate"
-                      className="form-control"
-                      value={birthDate}
-                      format="DD-MM-YYYY"
-                      openTo="year"
-                      onChange={(date) => {
-                        setBirthDate(date)
-                        setpatientInfo({
-                          ...patientInfo,
-                          birthDate: date.format("YYYY/MM/DD"),
-                        })
-                      }}
-                      slotProps={{
-                        textField: {
-                          helperText:
-                            "العمر: " + // currentAge =
-                            dayjs(new Date()).diff(dayjs(birthDate), "year") +
-                            (+dayjs(new Date()).get("year") -
-                              +dayjs(birthDate).get("year") <
-                            10
-                              ? " أعوام"
-                              : " عام"),
-                        },
-                      }}
-                    />
-                  </div>
-                  <div className="job">
-                    <label htmlFor="patientJob">الوظيفة</label>
-                    <input
-                      type="text"
-                      name="patientJob"
-                      id="patientJob"
-                      className="form-control"
-                      value={patientInfo?.job || ""}
-                      onChange={(e) => {
-                        setpatientInfo({
-                          ...patientInfo,
-                          job: e.currentTarget.value,
-                        })
-                      }}
-                    />
-                  </div>
-                  <div className="adresse">
-                    <label htmlFor="patientAdresse">العنوان</label>
-                    <input
-                      type="text"
-                      name="patientAdresse"
-                      id="patientAdresse"
-                      className="form-control"
-                      value={patientInfo?.adresse || ""}
-                      onChange={(e) => {
-                        setpatientInfo({
-                          ...patientInfo,
-                          adresse: e.currentTarget.value,
-                        })
-                      }}
-                    />
-                  </div>
-                </>
-              )}
-            </div>}
+            )}
 
             {newBook && !inEdit && (
               <>
@@ -273,7 +280,7 @@ const PatientDetails = () => {
                             setpatientInfo({
                               ...patientInfo,
                               maritalStatus: e.currentTarget.value,
-                            })
+                            });
                         }}
                       />
 
@@ -292,7 +299,7 @@ const PatientDetails = () => {
                             setpatientInfo({
                               ...patientInfo,
                               maritalStatus: e.currentTarget.value,
-                            })
+                            });
                         }}
                       />
                     </div>
@@ -414,7 +421,7 @@ const PatientDetails = () => {
                         otherSicks: e.currentTarget.value
                           .toString()
                           .split("  "),
-                      })
+                      });
                     }}
                   />
                 </div>
@@ -437,7 +444,7 @@ const PatientDetails = () => {
                         previousSurgeryOperations: e.currentTarget.value
                           .toString()
                           .split("  "),
-                      })
+                      });
                     }}
                   />
                 </div>
@@ -456,7 +463,7 @@ const PatientDetails = () => {
                       setpatientInfo({
                         ...patientInfo,
                         allergy: e.currentTarget.value.toString().split("  "),
-                      })
+                      });
                     }}
                   />
                 </div>
@@ -472,7 +479,7 @@ const PatientDetails = () => {
                       setpatientInfo({
                         ...patientInfo,
                         opinion: e.currentTarget.value,
-                      })
+                      });
                     }}
                   />
                 </div>
@@ -511,99 +518,135 @@ const PatientDetails = () => {
                 </table>
               </div>
             )}
-            {inEdit && (
+            {(!newBook || inEdit) && (
               <div className="next-visits">
                 <h4 className="title">الزيارة القادمة:-</h4>
                 <div className="content gap-3">
                   <div className="reason" style={{ flexBasis: "200px" }}>
                     <label htmlFor="illness">سبب الزيارة</label>
 
-                  <Select
-                    labelId="illness"
-                    id="demo-controlled-open-select"
-                    value={
-                      {
-                        value: patientInfo?.nextVisit?.reason,
-                        label: patientInfo?.nextVisit?.reason,
-                      } || "بتنجان مخلل"
-                    }
-                    onChange={(e) => {
-                      setpatientInfo({
-                        ...patientInfo,
-                        nextVisit: {
-                          ...patientInfo?.nextVisit,
-                          reason: e.value,
+                    <Select
+                      labelId="illness"
+                      id="demo-controlled-open-select"
+                      value={
+                        {
+                          value: patientInfo?.nextVisit?.reason,
+                          label: patientInfo?.nextVisit?.reason,
+                        } || "بتنجان مخلل"
+                      }
+                      onChange={(e) => {
+                        setpatientInfo({
+                          ...patientInfo,
+                          nextVisit: {
+                            ...patientInfo?.nextVisit,
+                            reason: e.value,
+                          },
+                        });
+                      }}
+                      options={services}
+                    />
+                  </div>
+                  <div className="visit-time">
+                    <label htmlFor="visitTime">موعد الزيارة</label>
+                    <MobileTimePicker
+                      className="form-control w-auto"
+                      id="visitTime"
+                      name="visitTime"
+                      views={["hours", "minutes"]}
+                      value={timeVisit}
+                      onChange={(time) => {
+                        setTimeVisit(time);
+                        setpatientInfo({
+                          ...patientInfo,
+                          nextVisit: {
+                            ...patientInfo?.nextVisit,
+                            visitTime: `${time.get("hour")}:${time.get(
+                              "minute"
+                            )}`,
+                          },
+                        });
+                      }}
+                      slotProps={{
+                        textField: {
+                          helperText: "HH:MM aa",
                         },
-                      });
-                    }}
-                    options={services}
-                  />
-                </div>
-                <div className="visit-time">
-                  <label htmlFor="visitTime">موعد الزيارة</label>
-                  <MobileTimePicker
-                    className="form-control w-auto"
-                    id="visitTime"
-                    name="visitTime"
-                    views={["hours", "minutes"]}
-                    value={timeVisit}
-                    onChange={(time) => {
-                      setTimeVisit(time);
-                      setpatientInfo({
-                        ...patientInfo,
-                        nextVisit: {
-                          ...patientInfo?.nextVisit,
-                          visitTime: `${time.get("hour")}:${time.get(
-                            "minute"
-                          )}`,
+                      }}
+                    />
+                  </div>
+                  <div className="visit-date">
+                    <label htmlFor="visitDate">تاريخ الزيارة</label>
+                    <DatePicker
+                      id="visitDate"
+                      name="visitDate"
+                      value={dayjs(patientInfo?.nextVisit?.visitDate)}
+                      onChange={(date) =>
+                        setpatientInfo({
+                          ...patientInfo,
+                          nextVisit: {
+                            ...patientInfo?.nextVisit,
+                            visitDate: date.format("YYYY-MM-DD"),
+                          },
+                        })
+                      }
+                      views={["year", "month", "day"]}
+                      openTo="month"
+                      format="DD/MM/YYYY"
+                      slotProps={{
+                        textField: {
+                          helperText:
+                            "DD / MM / YYYY -- " +
+                            weekDays[
+                              dayjs(patientInfo?.nextVisit?.visitDate)?.day()
+                            ],
                         },
-                      });
-                    }}
-                    slotProps={{
-                      textField: {
-                        helperText: "HH:MM aa",
-                      },
-                    }}
-                  />
-                </div>
-                <div className="visit-date">
-                  <label htmlFor="visitDate">تاريخ الزيارة</label>
-                  <DatePicker
-                    id="visitDate"
-                    name="visitDate"
-                    value={dayjs(patientInfo?.nextVisit?.visitDate)}
-                    onChange={(date) =>
-                      setpatientInfo({
-                        ...patientInfo,
-                        nextVisit: {
-                          ...patientInfo?.nextVisit,
-                          visitDate: date.format("YYYY-MM-DD"),
-                        },
-                      })
-                    }
-                    views={["year", "month", "day"]}
-                    openTo="month"
-                    format="DD/MM/YYYY"
-                    slotProps={{
-                      textField: {
-                        helperText:
-                          "DD / MM / YYYY -- " +
-                          weekDays[
-                            dayjs(patientInfo?.nextVisit?.visitDate)?.day()
-                          ],
-                      },
-                    }}
-                    disablePast
-                  />
+                      }}
+                      disablePast
+                    />
+                  </div>
+                  <div className="paid-up">
+                    <label htmlFor="paidUp">المبلغ المدفوع</label>
+                    <input
+                      type="number"
+                      id="paidUp"
+                      className="form-control"
+                      min={0}
+                      onChange={(e) => {
+                        setpatientInfo({
+                          ...patientInfo,
+                          nextVisit: {
+                            ...patientInfo?.nextVisit,
+                            paidUp: parseInt(e.currentTarget.value),
+                          },
+                        });
+                      }}
+                    />
+                  </div>
+                  <div className="required-money">
+                    <label htmlFor="requiredMoney">المبلغ المطلوب دفعه</label>
+                    <input
+                      type="number"
+                      id="requiredMoney"
+                      className="form-control"
+                      min={0}
+                      value={patientInfo?.requiredMoney || 0}
+                      onChange={(e) => {
+                        setpatientInfo({
+                          ...patientInfo,
+                          requiredMoney: parseInt(e.currentTarget.value),
+                        });
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
             <button className="align-self-start" type="submit">
               {setBtns(inDetails, inEdit, inFillForm)}
             </button>
           </form>
         </div>
       </div>
+
       {/* //printed paper */}
       <div className="d-none printed-paper">
         <div className="container">
@@ -668,8 +711,8 @@ const PatientDetails = () => {
               </tr>
             </thead>
             <tbody>
-              {[...Array(10)].map((row) => (
-                <tr key={row}>
+              {[...Array(10)].map((row, index) => (
+                <tr key={index}>
                   <td>
                     /&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     /
@@ -685,17 +728,17 @@ const PatientDetails = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default PatientDetails
+export default PatientDetails;
 
 function setBtns(inDetails, inEdit, inFillForm) {
   if (inDetails || inEdit) {
-    return "تعديل"
+    return "تعديل";
   } else if (inFillForm) {
-    return "أكمل البيانات"
+    return "أكمل البيانات";
   } else {
-    return "احجز"
+    return "احجز";
   }
 }
