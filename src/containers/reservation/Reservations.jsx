@@ -285,7 +285,7 @@ export default function Reservation() {
                     className="btn btn-info mx-1"
                     to={`/reservations/editDate/${patient?.id}`}
                   >
-                    تعديل الموعد
+                    الحجز
                   </Link>
                   <button
                     onClick={() => attendHandler(patient)}

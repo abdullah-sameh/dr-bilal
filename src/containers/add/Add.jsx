@@ -103,6 +103,7 @@ export default function Add() {
         formData?.paidUp.value !== ""
           ? formData?.requiredMoney.value - formData?.paidUp.value
           : formData?.requiredMoney.value,
+      notes: formData?.notes?.value,
     };
 
     Swal.fire({

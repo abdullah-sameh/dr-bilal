@@ -14,7 +14,19 @@
   align-items: center;
   justify-content: center;
 }
-
+.undo {
+  all: initial;
+  color: #fff;
+  background: blue;
+  padding: 0 5px 5px;
+  border-radius: 5px;
+  font-size: 30px;
+  transform: rotateY(180deg);
+  margin-right: 10px;
+}
+.undo:hover {
+  transform: scale(1.1) rotateY(180deg) !important;
+}
 .patient-info .editPatientInfo .main-info,
 .patient-info .editPatientInfo .next-visits .content {
   display: grid;
@@ -44,9 +56,7 @@
 }
 
 .patient-info .editPatientInfo > div label {
-  /* margin-bottom: 10px; */
   font-size: 1.2rem;
-  margin-bottom: 10px !important;
 }
 
 .patient-info .editPatientInfo .notes {

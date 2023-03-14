@@ -94,7 +94,7 @@ const PatientDetails = () => {
     }).then(async (result) => {
       /*Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
-        console.log(patientInfo);
+        console.log(patientInfo)
         await setDoc(doc(db, "patients", patientId), {
           ...patientInfo,
           requiredMoney:
@@ -129,8 +129,7 @@ const PatientDetails = () => {
 
     let age = currentDt.getFullYear() - birthDt.getFullYear()
 
-    // img by birth date
-    if (age >= 11) {
+    if (age >= 6) {
       return true
     } else {
       return false
@@ -139,7 +138,6 @@ const PatientDetails = () => {
 
   return (
     <>
-      <button className="undo" type="button" onClick={() => window.history.back()}>undo</button>
       <div className="patient-info">
         <div className="container">
           <form
@@ -154,112 +152,120 @@ const PatientDetails = () => {
                   <p className="fw-bold">د. بلال شعبان الزهيري</p>
                 </div>
               </div>
-              <h1 className="title">{patientInfo?.code}</h1>
+              <h1 className="title">
+                {patientInfo?.code}
+                <button
+                  className="undo"
+                  type="button"
+                  onClick={() => window.history.back()}
+                >
+                  {"➦"}
+                </button>
+              </h1>
             </div>
-            {!inEdit && (
-              <div className="main-info gap-3">
-                <div className="name">
-                  <label htmlFor="patientName">اسم العميل</label>
-                  <input
-                    type="text"
-                    name="patientName"
-                    id="patientName"
-                    className="form-control"
-                    value={patientInfo?.name || ""}
-                    onChange={(e) => {
-                      setpatientInfo({
-                        ...patientInfo,
-                        name: e.currentTarget.value,
-                      })
-                    }}
-                    required
-                  />
-                </div>
-                <div className="phone">
-                  <label htmlFor="patientPhone">رقم الهاتف</label>
-                  <input
-                    type="text"
-                    name="patientPhone"
-                    id="patientPhone"
-                    className="form-control"
-                    value={patientInfo?.phone || ""}
-                    onChange={(e) => {
-                      setpatientInfo({
-                        ...patientInfo,
-                        phone: e.currentTarget.value,
-                      })
-                    }}
-                    required
-                  />
-                </div>
-                {newBook && (
-                  <>
-                    <div className="birth-date">
-                      <label htmlFor="patientBirthDate">تاريخ الميلاد</label>
-                      <DatePicker
-                        name="patientBirthDate"
-                        id="patientBirthDate"
-                        className="form-control"
-                        value={birthDate}
-                        format="DD-MM-YYYY"
-                        openTo="year"
-                        onChange={(date) => {
-                          setBirthDate(date)
-                          setpatientInfo({
-                            ...patientInfo,
-                            birthDate: date.format("YYYY/MM/DD"),
-                          })
-                        }}
-                        slotProps={{
-                          textField: {
-                            helperText:
-                              "العمر: " + // currentAge =
-                              dayjs(new Date()).diff(dayjs(birthDate), "year") +
-                              (+dayjs(new Date()).get("year") -
-                                +dayjs(birthDate).get("year") <
-                              10
-                                ? " أعوام"
-                                : " عام"),
-                          },
-                        }}
-                      />
-                    </div>
-                    <div className="job">
-                      <label htmlFor="patientJob">الوظيفة</label>
-                      <input
-                        type="text"
-                        name="patientJob"
-                        id="patientJob"
-                        className="form-control"
-                        value={patientInfo?.job || ""}
-                        onChange={(e) => {
-                          setpatientInfo({
-                            ...patientInfo,
-                            job: e.currentTarget.value,
-                          })
-                        }}
-                      />
-                    </div>
-                    <div className="adresse">
-                      <label htmlFor="patientAdresse">العنوان</label>
-                      <input
-                        type="text"
-                        name="patientAdresse"
-                        id="patientAdresse"
-                        className="form-control"
-                        value={patientInfo?.adresse || ""}
-                        onChange={(e) => {
-                          setpatientInfo({
-                            ...patientInfo,
-                            adresse: e.currentTarget.value,
-                          })
-                        }}
-                      />
-                    </div>
-                  </>
-                )}
+
+            <div className="main-info gap-3">
+              <div className="name">
+                <label htmlFor="patientName">اسم العميل</label>
+                <input
+                  type="text"
+                  name="patientName"
+                  id="patientName"
+                  className="form-control"
+                  value={patientInfo?.name || ""}
+                  onChange={(e) => {
+                    setpatientInfo({
+                      ...patientInfo,
+                      name: e.currentTarget.value,
+                    })
+                  }}
+                  required
+                />
               </div>
-            )}
+              <div className="phone">
+                <label htmlFor="patientPhone">رقم الهاتف</label>
+                <input
+                  type="text"
+                  name="patientPhone"
+                  id="patientPhone"
+                  className="form-control"
+                  value={patientInfo?.phone || ""}
+                  onChange={(e) => {
+                    setpatientInfo({
+                      ...patientInfo,
+                      phone: e.currentTarget.value,
+                    })
+                  }}
+                  required
+                />
+              </div>
+              {newBook && !inEdit && (
+                <>
+                  <div className="birth-date">
+                    <label htmlFor="patientBirthDate">تاريخ الميلاد</label>
+                    <DatePicker
+                      name="patientBirthDate"
+                      id="patientBirthDate"
+                      className="form-control"
+                      value={birthDate}
+                      format="DD-MM-YYYY"
+                      openTo="year"
+                      onChange={(date) => {
+                        setBirthDate(date)
+                        setpatientInfo({
+                          ...patientInfo,
+                          birthDate: date.format("YYYY/MM/DD"),
+                        })
+                      }}
+                      slotProps={{
+                        textField: {
+                          helperText:
+                            "العمر: " + // currentAge =
+                            dayjs(new Date()).diff(dayjs(birthDate), "year") +
+                            (+dayjs(new Date()).get("year") -
+                              +dayjs(birthDate).get("year") <
+                            10
+                              ? " أعوام"
+                              : " عام"),
+                        },
+                      }}
+                    />
+                  </div>
+                  <div className="job">
+                    <label htmlFor="patientJob">الوظيفة</label>
+                    <input
+                      type="text"
+                      name="patientJob"
+                      id="patientJob"
+                      className="form-control"
+                      value={patientInfo?.job || ""}
+                      onChange={(e) => {
+                        setpatientInfo({
+                          ...patientInfo,
+                          job: e.currentTarget.value,
+                        })
+                      }}
+                    />
+                  </div>
+                  <div className="adresse">
+                    <label htmlFor="patientAdresse">العنوان</label>
+                    <input
+                      type="text"
+                      name="patientAdresse"
+                      id="patientAdresse"
+                      className="form-control"
+                      value={patientInfo?.adresse || ""}
+                      onChange={(e) => {
+                        setpatientInfo({
+                          ...patientInfo,
+                          adresse: e.currentTarget.value,
+                        })
+                      }}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
 
             {newBook && !inEdit && (
               <>
@@ -487,6 +493,23 @@ const PatientDetails = () => {
                 </div>
               </>
             )}
+            <div className="notes">
+              <div className="notes">
+                <label htmlFor="notes">ملاحظات أخرى</label>
+                <textarea
+                  id="notes"
+                  className="form-control"
+                  value={patientInfo?.notes || ""}
+                  onChange={(e) => {
+                    setpatientInfo({
+                      ...patientInfo,
+                      notes: e.currentTarget.value,
+                    })
+                  }}
+                  name="notes"
+                ></textarea>
+              </div>
+            </div>
             {patientInfo?.previousVisits?.length !== 0 && (
               <div className="previous-visits">
                 <h4 className="title">الزيارات السابقة:-</h4>
@@ -648,19 +671,19 @@ const PatientDetails = () => {
                       type="number"
                       id="requiredMoney"
                       className="form-control"
-                      value={patientInfo?.requiredMoney || 0}
+                      value={patientInfo?.requiredMoney || ""}
                       onChange={(e) => {
                         setpatientInfo({
                           ...patientInfo,
                           requiredMoney: parseInt(e.currentTarget.value),
-                        });
+                        })
                       }}
                     />
                   </div>
                 </div>
               </div>
             )}
-            {newBook && (
+            {newBook && !inEdit && (
               <button
                 type="button"
                 className="align-self-start print"
@@ -703,40 +726,27 @@ const PatientDetails = () => {
                   patientInfo?.popularSicks?.smoker) ? (
                   <h5 className="sicks">
                     التاريخ المرضى:{" "}
-                    {patientInfo?.otherSicks?.join(" , ") +
+                    {patientInfo?.maritalStatus === "unmarried"
+                      ? "أعزب "
+                      : "متزوج "}
+                    {patientInfo?.pregnant && "حامل "}
+                    {patientInfo?.breastfeeding && `مرضعة `}
+                    {patientInfo?.otherSicks?.join(" ، ") +
                       (patientInfo?.popularSicks?.highBloodPressure
-                        ? " , ضغط"
+                        ? " ، ضغط"
                         : "") +
-                      (patientInfo?.popularSicks?.smoker ? " , مدخن" : "") +
-                      (patientInfo?.popularSicks?.diabetes ? " , سكر" : "")}
+                      (patientInfo?.popularSicks?.smoker ? " ، مدخن" : "") +
+                      (patientInfo?.popularSicks?.diabetes
+                        ? " ، سكر"
+                        : "")}{" "}
+                    {" ،"}
+                    {patientInfo?.previousSurgeryOperations.join("-")} {" ،"}
+                    {patientInfo?.allergy.join("-")}
                   </h5>
                 ) : (
                   <></>
                 )}
                 <h5 className="job">الوظيفة: {patientInfo?.job}</h5>
-                {patientInfo?.previousSurgeryOperations && (
-                  <h5 className="operations">
-                    العمليات: {patientInfo?.previousSurgeryOperations.join("-")}
-                  </h5>
-                )}
-                {patientInfo?.allergy && (
-                  <h5 className="allergy">
-                    حساسية من: {patientInfo?.allergy.join("-")}
-                  </h5>
-                )}
-                <h5 className="marital-status">
-                  الحالة الاجتماعية:{" "}
-                  {patientInfo?.maritalStatus === "unmarried"
-                    ? "أعزب"
-                    : "متزوج"}
-                </h5>
-
-                {(patientInfo?.pregnant || patientInfo?.breastfeeding) && (
-                  <h5>
-                    {patientInfo?.pregnant && "حامل"}
-                    {patientInfo?.breastfeeding && `--مرضعة}`}
-                  </h5>
-                )}
               </div>
               <div className="col-6">
                 <div className="mouth">
