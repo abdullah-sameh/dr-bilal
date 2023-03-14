@@ -18,7 +18,7 @@ export default function Add() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(dayjs());
-  const [selectedTime, setSelectedTime] = useState(dayjs());
+  const [selectedTime, setSelectedTime] = useState(dayjs('none'));
   const [visitReason, setVisitReason] = useState();
 
   const weekDays = [
@@ -396,29 +396,31 @@ export default function Add() {
                     }}
                   />
                 </div>
-                <div className="paid-up">
-                  <label htmlFor="paidUp">المبلغ المدفوع</label>
-                  <input
-                    type="number"
-                    name="paidUp"
-                    id="paidUp"
-                    min={0}
-                    className="form-control"
-                  />
-                </div>
-                <div className="required-money">
-                  <label htmlFor="requiredMoney">المبلغ المطلوب دفعه</label>
-                  <input
-                    type="number"
-                    id="requiredMoney"
-                    name="requiredMoney"
-                    min={0}
-                    className="form-control"
-                  />
+                <div className="none">
+                  <div className="paid-up">
+                    <label htmlFor="paidUp">المبلغ المدفوع</label>
+                    <input
+                      type="number"
+                      name="paidUp"
+                      id="paidUp"
+                      min={0}
+                      className="form-control"
+                    />
+                  </div>
+                  <div className="required-money">
+                    <label htmlFor="requiredMoney">المبلغ المطلوب دفعه</label>
+                    <input
+                      type="number"
+                      id="requiredMoney"
+                      name="requiredMoney"
+                      min={0}
+                      className="form-control"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-            
+
             <div className="notes">
               <div className="notes">
                 <label htmlFor="notes">ملاحظات أخرى</label>
@@ -434,5 +436,5 @@ export default function Add() {
         </div>
       </div>
     </>
-  );
+  )
 }

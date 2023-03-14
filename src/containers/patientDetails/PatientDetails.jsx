@@ -631,6 +631,7 @@ const PatientDetails = () => {
                   <div className="first-time">
                     <input
                       type="checkbox"
+                      checked
                       value={patientInfo?.nextVisit?.firstTime || false}
                       onChange={(e) =>
                         setpatientInfo({
@@ -743,7 +744,7 @@ const PatientDetails = () => {
                     {patientInfo?.previousSurgeryOperations.join("-")} {" ،"}
                     {patientInfo?.allergy.join("-")}
                   </h5>
-                ) : (
+                ) : ( 
                   <></>
                 )}
                 <h5 className="job">الوظيفة: {patientInfo?.job}</h5>
