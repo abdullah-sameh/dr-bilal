@@ -154,5 +154,5 @@ export default function Data() {
         <Route path="/:patientId" element={<PatientDetails />} />
       </Routes>
     </>
-  )
+  );
 }

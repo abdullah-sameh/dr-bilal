@@ -1,34 +1,34 @@
-import Select from "react-select"
-import { DatePicker, MobileTimePicker } from "@mui/x-date-pickers"
-import dayjs from "dayjs"
-import { onAuthStateChanged } from "firebase/auth"
-import { doc, setDoc } from "firebase/firestore"
-import React, { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { useHref, useNavigate, useParams } from "react-router-dom"
-import printLogo from "../../assets/colored_logo.png"
-import adultMouth from "../../assets/adult_mouth.jpg"
-import kidsMouth from "../../assets/kids_mouth.jpg"
-import Swal from "sweetalert2"
-import { auth, db } from "../../firebase"
-import { getPatientById } from "../../rtk/slices/patientSlice"
-import { setUser } from "../../rtk/slices/userSlice"
-import "./patientDetails.css"
+import Select from "react-select";
+import { DatePicker, MobileTimePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHref, useNavigate, useParams } from "react-router-dom";
+import printLogo from "../../assets/colored_logo.png";
+import adultMouth from "../../assets/adult_mouth.jpg";
+import kidsMouth from "../../assets/kids_mouth.jpg";
+import Swal from "sweetalert2";
+import { auth, db } from "../../firebase";
+import { getPatientById } from "../../rtk/slices/patientSlice";
+import { setUser } from "../../rtk/slices/userSlice";
+import "./patientDetails.css";
 
 const PatientDetails = () => {
-  const { patientId } = useParams()
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const url = useHref()
+  const { patientId } = useParams();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const url = useHref();
 
-  const patient = useSelector((state) => state.patientById)
-  const [timeVisit, setTimeVisit] = useState(dayjs("none"))
-  const [birthDate, setBirthDate] = useState(dayjs("none"))
-  const [newBook, setNewBook] = useState(false)
-  const [inDetails, setInDetails] = useState(false)
-  const [inFillForm, setInFillForm] = useState(false)
-  const [inEdit, setInEdit] = useState(false)
-  const [patientInfo, setpatientInfo] = useState({})
+  const patient = useSelector((state) => state.patientById);
+  const [timeVisit, setTimeVisit] = useState(dayjs("none"));
+  const [birthDate, setBirthDate] = useState(dayjs("none"));
+  const [newBook, setNewBook] = useState(false);
+  const [inDetails, setInDetails] = useState(false);
+  const [inFillForm, setInFillForm] = useState(false);
+  const [inEdit, setInEdit] = useState(false);
+  const [patientInfo, setpatientInfo] = useState({});
   const weekDays = [
     "الأحد",
     "الإثنين",
@@ -37,7 +37,7 @@ const PatientDetails = () => {
     "الخميس",
     "الجمعة",
     "السبت",
-  ]
+  ];
   const services = [
     { value: "كشف", label: "كشف" },
     { value: "أشعة عادية", label: "أشعة عادية" },
@@ -55,36 +55,36 @@ const PatientDetails = () => {
     { value: "تبييض", label: "تبييض" },
     { value: "علاج", label: "علاج" },
     { value: "تقويم", label: "تقويم" },
-  ]
+  ];
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        dispatch(setUser(user))
+        dispatch(setUser(user));
       } else {
-        navigate("/")
+        navigate("/");
       }
-    })
-    dispatch(getPatientById(patientId))
+    });
+    dispatch(getPatientById(patientId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [patientId])
+  }, [patientId]);
 
   useEffect(() => {
-    setpatientInfo(patient.data)
+    setpatientInfo(patient.data);
     setTimeVisit(
       dayjs()
         .hour(+patient?.data?.nextVisit?.visitTime?.split(":")[0])
         .minute(+patient?.data?.nextVisit?.visitTime?.split(":")[1])
-    )
-    setBirthDate(dayjs(patientInfo?.birthDate))
-    url.includes("newBook") ? setNewBook(false) : setNewBook(true)
-    url.includes("details") ? setInDetails(true) : setInDetails(false)
-    url.includes("fillForm") ? setInFillForm(true) : setInFillForm(false)
-    url.includes("editDate") ? setInEdit(true) : setInEdit(false)
-  }, [patient])
+    );
+    setBirthDate(dayjs(patientInfo?.birthDate));
+    url.includes("newBook") ? setNewBook(false) : setNewBook(true);
+    url.includes("details") ? setInDetails(true) : setInDetails(false);
+    url.includes("fillForm") ? setInFillForm(true) : setInFillForm(false);
+    url.includes("editDate") ? setInEdit(true) : setInEdit(false);
+  }, [patient]);
 
   const editInfo = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     Swal.fire({
       title: "هل أنت متأكد؟",
       text: `من أنك تريد تعديل بيانات ${patientInfo?.name}؟`,
@@ -94,47 +94,47 @@ const PatientDetails = () => {
     }).then(async (result) => {
       /*Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
-        console.log(patientInfo)
+        console.log(patientInfo);
         await setDoc(doc(db, "patients", patientId), {
           ...patientInfo,
           requiredMoney:
             patientInfo?.requiredMoney - patientInfo?.nextVisit?.paidUp,
         })
           .then(() => {
-            dispatch(getPatientById(patientId))
+            dispatch(getPatientById(patientId));
             Swal.fire({
               position: "center",
               icon: "success",
               title: "تم بنجاح",
               showConfirmButton: false,
               timer: 1500,
-            })
-            navigate(-1)
+            });
+            navigate(-1);
           })
           .catch((e) => {
-            console.log(e.message)
+            console.log(e.message);
             Swal.fire({
               icon: "error",
               title: "خطأ",
               text: "حاول مرة أخرى!",
-            })
-          })
+            });
+          });
       }
-    })
-  }
+    });
+  };
 
   const handleMouthByAge = (birthDate) => {
-    let birthDt = new Date(birthDate)
-    let currentDt = new Date()
+    let birthDt = new Date(birthDate);
+    let currentDt = new Date();
 
-    let age = currentDt.getFullYear() - birthDt.getFullYear()
+    let age = currentDt.getFullYear() - birthDt.getFullYear();
 
     if (age >= 6) {
-      return true
+      return true;
     } else {
-      return false
+      return false;
     }
-  }
+  };
 
   return (
     <>
@@ -177,7 +177,7 @@ const PatientDetails = () => {
                     setpatientInfo({
                       ...patientInfo,
                       name: e.currentTarget.value,
-                    })
+                    });
                   }}
                   required
                 />
@@ -194,7 +194,7 @@ const PatientDetails = () => {
                     setpatientInfo({
                       ...patientInfo,
                       phone: e.currentTarget.value,
-                    })
+                    });
                   }}
                   required
                 />
@@ -211,11 +211,11 @@ const PatientDetails = () => {
                       format="DD-MM-YYYY"
                       openTo="year"
                       onChange={(date) => {
-                        setBirthDate(date)
+                        setBirthDate(date);
                         setpatientInfo({
                           ...patientInfo,
                           birthDate: date.format("YYYY/MM/DD"),
-                        })
+                        });
                       }}
                       slotProps={{
                         textField: {
@@ -243,7 +243,7 @@ const PatientDetails = () => {
                         setpatientInfo({
                           ...patientInfo,
                           job: e.currentTarget.value,
-                        })
+                        });
                       }}
                     />
                   </div>
@@ -259,7 +259,7 @@ const PatientDetails = () => {
                         setpatientInfo({
                           ...patientInfo,
                           adresse: e.currentTarget.value,
-                        })
+                        });
                       }}
                     />
                   </div>
@@ -288,7 +288,7 @@ const PatientDetails = () => {
                             setpatientInfo({
                               ...patientInfo,
                               maritalStatus: e.currentTarget.value,
-                            })
+                            });
                         }}
                       />
 
@@ -307,7 +307,7 @@ const PatientDetails = () => {
                             setpatientInfo({
                               ...patientInfo,
                               maritalStatus: e.currentTarget.value,
-                            })
+                            });
                         }}
                       />
                     </div>
@@ -429,7 +429,7 @@ const PatientDetails = () => {
                         otherSicks: e.currentTarget.value
                           .toString()
                           .split("  "),
-                      })
+                      });
                     }}
                   />
                 </div>
@@ -452,7 +452,7 @@ const PatientDetails = () => {
                         previousSurgeryOperations: e.currentTarget.value
                           .toString()
                           .split("  "),
-                      })
+                      });
                     }}
                   />
                 </div>
@@ -471,7 +471,7 @@ const PatientDetails = () => {
                       setpatientInfo({
                         ...patientInfo,
                         allergy: e.currentTarget.value.toString().split("  "),
-                      })
+                      });
                     }}
                   />
                 </div>
@@ -487,7 +487,7 @@ const PatientDetails = () => {
                       setpatientInfo({
                         ...patientInfo,
                         opinion: e.currentTarget.value,
-                      })
+                      });
                     }}
                   />
                 </div>
@@ -504,7 +504,7 @@ const PatientDetails = () => {
                     setpatientInfo({
                       ...patientInfo,
                       notes: e.currentTarget.value,
-                    })
+                    });
                   }}
                   name="notes"
                 ></textarea>
@@ -566,7 +566,7 @@ const PatientDetails = () => {
                             ...patientInfo?.nextVisit,
                             reason: e.value,
                           },
-                        })
+                        });
                       }}
                       options={services}
                     />
@@ -580,7 +580,7 @@ const PatientDetails = () => {
                       views={["hours", "minutes"]}
                       value={timeVisit}
                       onChange={(time) => {
-                        setTimeVisit(time)
+                        setTimeVisit(time);
                         setpatientInfo({
                           ...patientInfo,
                           nextVisit: {
@@ -589,7 +589,7 @@ const PatientDetails = () => {
                               "minute"
                             )}`,
                           },
-                        })
+                        });
                       }}
                       slotProps={{
                         textField: {
@@ -631,17 +631,16 @@ const PatientDetails = () => {
                   <div className="first-time">
                     <input
                       type="checkbox"
-                      checked
                       value={patientInfo?.nextVisit?.firstTime || false}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setpatientInfo({
                           ...patientInfo,
                           nextVisit: {
                             ...patientInfo?.nextVisit,
                             firstTime: e.currentTarget.checked,
                           },
-                        })
-                      }
+                        });
+                      }}
                       name="firstTime"
                       id="firstTime"
                     />
@@ -662,7 +661,7 @@ const PatientDetails = () => {
                             ...patientInfo?.nextVisit,
                             paidUp: e.currentTarget.value,
                           },
-                        })
+                        });
                       }}
                     />
                   </div>
@@ -677,7 +676,7 @@ const PatientDetails = () => {
                         setpatientInfo({
                           ...patientInfo,
                           requiredMoney: parseInt(e.currentTarget.value),
-                        })
+                        });
                       }}
                     />
                   </div>
@@ -744,7 +743,7 @@ const PatientDetails = () => {
                     {patientInfo?.previousSurgeryOperations.join("-")} {" ،"}
                     {patientInfo?.allergy.join("-")}
                   </h5>
-                ) : ( 
+                ) : (
                   <></>
                 )}
                 <h5 className="job">الوظيفة: {patientInfo?.job}</h5>
@@ -791,17 +790,17 @@ const PatientDetails = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default PatientDetails
+export default PatientDetails;
 
 function setBtns(inDetails, inEdit, inFillForm) {
   if (inDetails || inEdit) {
-    return "تعديل"
+    return "تعديل";
   } else if (inFillForm) {
-    return "أكمل البيانات"
+    return "أكمل البيانات";
   } else {
-    return "احجز"
+    return "احجز";
   }
 }
