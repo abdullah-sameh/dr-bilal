@@ -12,7 +12,7 @@ export default function App() {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="*" element={<PagesRoutes />} />
+        <Route path="/*" element={<PagesRoutes />} />
       </Routes>
     </LocalizationProvider>
   );

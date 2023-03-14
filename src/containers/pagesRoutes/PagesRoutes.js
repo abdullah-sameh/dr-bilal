@@ -19,6 +19,7 @@ const PagesRoutes = () => {
       <Route path="/data/:patientId" element={<PatientDetails />} />
       <Route path="/data/details/:patientId" element={<PatientDetails />} />
       <Route path="/data/newBook/:patientId" element={<PatientDetails />} />
+      <Route path="*" element={<h1>Not Found</h1>} />
     </Routes>
   );
 };
